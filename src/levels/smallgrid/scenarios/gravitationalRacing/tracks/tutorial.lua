@@ -1,0 +1,40 @@
+local M = {}
+--
+-- local function toggleInfo(show)
+--   --[[
+--   Toggles the view of the info at the start
+--   Note: this function does not delete them, since they will be used again when
+--         the scenario is reset, only move them out of view
+--   ]]--
+--   local i = 1
+--   local obj = scenetree.findObject("info"..i)
+--   while obj do
+--     --Default to removing from view
+--     local origPos, z = obj:getPosition(), 0
+--
+--     --Place the object where it should be
+--     if show then
+--       z = origPos.z
+--       --Check to see if it is not in view
+--       if z < 0 then
+--         TorqueScript.eval('info'..i..'.hidden = true;')
+--       end
+--     else
+--       TorqueScript.eval('info'..i..'.hidden = true;')
+--     end
+--
+--     i = i + 1
+--     obj = scenetree.findObject("info"..i)
+--   end
+-- end
+--
+-- local function onScenarioChange(sc)
+--   if sc.state == "pre-running" then
+--     toggleInfo(true)
+--   elseif sc.state == "running" then
+--     toggleInfo(false)
+--   end
+-- end
+--
+-- M.onScenarioChange = onScenarioChange
+return M

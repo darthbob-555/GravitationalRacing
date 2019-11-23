@@ -1,0 +1,14 @@
+.show{
+  cursor: pointer;
+  display: block;
+  background: black;
+}
+.show + input{
+  display: none;
+}
+.show + input + div{
+  display: none;
+}
+.show + input:checked + div{
+  display: block;
+}

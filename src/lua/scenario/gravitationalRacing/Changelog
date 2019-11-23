@@ -1,0 +1,3 @@
+-Fixed saving not working
+-Stars now have the material attribute emissive so will now show up at night
+-Added some internal functionality to allow the Celestial Creator to work

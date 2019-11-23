@@ -1,0 +1,19 @@
+{
+  "domElement": "<scenario-end-screen></scenario-end-screen>",
+  "name": "Gravitational Racing: End Screen",
+  "types": [
+    "ui.apps.categories.vehicle_info"
+  ],
+  "description": "End screen for the gravitational racing scenarios",
+  "css": {
+    "min-width": "1366px",
+    "height": "1080px",
+    "width": "1920px",
+    "right": "0px",
+    "min-height": "768px",
+    "top": "0px"
+  },
+  "author": "Darthbob555",
+  "version": "0.1",
+  "directive": "scenarioEndScreen"
+}

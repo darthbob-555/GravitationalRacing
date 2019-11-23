@@ -1,0 +1,25 @@
+{
+  "base_Color_E05_1" : {
+    "name" : "base_Color_E05_1",
+    "mapTo" : "Color_E05_1",
+    "class" : "material",
+    "persistentId" : "aadd51fd-4c91-427c-8233-a2b29e467040",
+    "Stages" : [
+      {
+        "diffuseColor" : [ 1, 1, 0, 1 ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "base_Color_M00_0" : {
+    "name" : "base_Color_M00_0",
+    "mapTo" : "Color_M00_0",
+    "class" : "material",
+    "persistentId" : "2654760d-732b-4f0a-b1ce-3cad46afb170",
+    "Stages" : [ {}, {}, {}, {} ],
+    "translucentBlendOp" : "None"
+  }
+}

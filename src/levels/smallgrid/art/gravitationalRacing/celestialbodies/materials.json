@@ -1,0 +1,116 @@
+{
+  "ABDoradusA" : {
+    "name" : "ABDoradusA",
+    "mapTo" : "ABDoradusA",
+    "class" : "material",
+    "persistentId" : "44fb8844-6cba-4aac-a85b-4cc459739e41",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/ABDoradusA.jpg",
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ]
+  },
+  "CDCrucis" : {
+    "name" : "CDCrucis",
+    "mapTo" : "CDCrucis",
+    "class" : "material",
+    "persistentId" : "44fb8844-6cba-4aac-a85b-4cc459739e41",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/CDCrucis.jpg",
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ]
+  },
+  "CHXR73" : {
+    "name" : "CHXR73",
+    "mapTo" : "CHXR73",
+    "class" : "material",
+    "persistentId" : "452f8722-6f10-47a2-bc25-43d6425e85a5",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/CHXR73.jpg",
+        "diffuseColor" : [ 0.5, 0.5, 0.5, 2 ],
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "HD49798" : {
+    "name" : "HD49798",
+    "mapTo" : "HD49798",
+    "class" : "material",
+    "persistentId" : "44fb8844-6cba-4aac-a85b-4cc459739e41",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/HD49798.jpg",
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ]
+  },
+  "alphaVolantis" : {
+    "name" : "alphaVolantis",
+    "mapTo" : "alphaVolantis",
+    "class" : "material",
+    "persistentId" : "44fb8844-6cba-4aac-a85b-4cc459739e41",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/alphaVolantis.jpg",
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ]
+  },
+  "etaUrsaeMajoris" : {
+    "name" : "etaUrsaeMajoris",
+    "mapTo" : "etaUrsaeMajoris",
+    "class" : "material",
+    "persistentId" : "34ecfc98-91ed-4838-9190-c7be3ebdedb9",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/etaUrsaeMajoris.jpg",
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ]
+  },
+  "procyonA" : {
+    "name" : "procyonA",
+    "mapTo" : "procyonA",
+    "class" : "material",
+    "persistentId" : "44fb8844-6cba-4aac-a85b-4cc459739e41",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/celestialbodies/procyonA.jpg",
+        "glow" : true,
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ]
+  }
+}

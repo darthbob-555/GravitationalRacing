@@ -1,0 +1,19 @@
+{
+  "trophy_silver" : {
+    "name" : "trophy_silver",
+    "mapTo" : "trophy_slver",
+    "class" : "material",
+    "persistentId" : "ad57a033-50a4-495a-955c-6776e183e69a",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/medalRoom/trophy_silver.png",
+        "diffuseColor" : [ 0.7529411911964417, 0.7529411911964417, 0.7529411911964417, 1 ],
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  }
+}

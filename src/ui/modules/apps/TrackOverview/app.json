@@ -1,0 +1,19 @@
+{
+  "domElement": "<track-overview></track-overview>",
+  "name": "Gravitational Racing: Track Overview",
+  "types": [
+    "ui.apps.categories.vehicle_info"
+  ],
+  "description": "Track overview for the gravitational racing",
+  "css": {
+    "min-width": "1000px",
+    "height": "340px",
+    "width": "1000px",
+    "right": "0px",
+    "min-height": "340px",
+    "top": "0px"
+  },
+  "author": "Darthbob555",
+  "version": "0.1",
+  "directive": "trackOverview"
+}

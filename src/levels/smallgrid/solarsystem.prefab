@@ -1,0 +1,296 @@
+//--- OBJECT WRITE BEGIN ---
+$ThisPrefab = new SimGroup() {
+   canSave = "1";
+   canSaveDynamicFields = "1";
+      groupPosition = "0.000000 0.000000 0.000000";
+
+   new BeamNGVehicle(scenario_player0) {
+      JBeam = "sbr";
+      color = "White";
+      colorPalette0 = "White";
+      colorPalette1 = "White";
+      renderDistance = "500";
+      renderFade = "0.100000001";
+      datablock = "default_vehicle";
+      position = "-5.80051613 -1500 0.137540996";
+      scale = "1 1 1";
+      rotationMatrix = "-1 8.74227766e-08 0 -8.74227766e-08 -1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         licenseFormats = "[\"30-15\"]";
+         licenseText = "SOLAR";
+   };
+   new TSStatic() {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/trail.dae";
+      dynamic = "0";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "15.2447004 -1386.18994 -1";
+      scale = "10 10 1";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      isRenderEnabled = "false";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+   };
+   new BeamNGTrigger(lotsOfSuns) {
+      TriggerType = "Box";
+      TriggerMode = "Contains";
+      TriggerTestType = "Race corners";
+      luaFunction = "onBeamNGTrigger";
+      tickPeriod = "100";
+      debug = "0";
+      ticking = "0";
+      triggerColor = "255 192 0 45";
+      defaultOnLeave = "0";
+      position = "15.298111 -1386.16919 1.15288723";
+      scale = "10 10 3";
+      rotationMatrix = "1 0 0 0 0.999999762 -0.000690533896 0 0.000690533896 0.999999762";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+   };
+   new TSStatic(planet_8) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/neptune.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "44960 2750 1711.39014";
+      scale = "353.590607 353.590607 353.590607";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_7) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/uranus.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "28710 2750 807.390137";
+      scale = "364.21759 364.21759 364.21759";
+      rotationMatrix = "1 0 0 0 0.999999762 -0.000690534245 0 0.000690534245 0.999999762";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_6) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/saturn.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "14280 2750 1041.39014";
+      scale = "836.255737 836.255737 836.255737";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_5) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/jupiter.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "7783 2750 600.390137";
+      scale = "1003.97504 1003.97504 1003.97504";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_4) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/mars.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "2278 2750 495.390137";
+      scale = "48.6686134 48.6686134 48.6686134";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_3) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/earth.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "1496 2750 421.390137";
+      scale = "91.4924011 91.4924011 91.4924011";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_2) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/venus.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "1080 2750 485.390137";
+      scale = "86.8969574 86.8969574 86.8969574";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(planet_1) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/mercury.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "575 2750 491.390137";
+      scale = "35.0259018 35.0259018 35.0259018";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+         orbitingBody = "star_1";
+   };
+   new TSStatic(star_1) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/sun.dae";
+      dynamic = "1";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "0 2750 421.390137";
+      scale = "10000 10000 10000";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         label = "1";
+         objectType = "dynamic";
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

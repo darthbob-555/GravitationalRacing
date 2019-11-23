@@ -1,0 +1,442 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<title>
+blank
+</title> -->
+<style>
+/*  */
+* {
+  color: white;
+}
+/*  */
+#finish {
+  color: lightgreen;
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: green;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  font-size: 100px;
+  background-image: url("modules/apps/ScenarioEndScreen/checkered_flag.png");
+}
+#info {
+  position: absolute;
+  top: -800px;
+  text-align: center;
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgba(0, 0, 0, 0.875);
+  border: 3px solid black;
+}
+.resultsTable {
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.unlockable {
+  font-size: 36px;
+  width: 100%;
+  border-right: 2px solid white;
+}
+.data {
+  font-size: 60px;
+  width: 60%;
+  border-right: 2px solid white;
+}
+.title {
+  font-size: 48px;
+  text-align: left;
+  border-right: 2px solid white;
+  width: 315px;
+}
+.medalImg {
+  width: 80%;
+  position: relative;
+}
+.medal {
+  width: 315px;
+}
+.pb {
+  font-size: 48px;
+  float: right;
+  animation: shimmerWhitePurple;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+.hide {
+  border: 2px solid red;
+}
+.hide:hover {
+  background-color: red;
+}
+.show {
+  color: white;
+  border: 2px solid green;
+}
+.show:hover {
+  background-color: green;
+}
+#buttons {
+  list-style-type: none;
+  margin: 20px;
+  display: flex;
+  -webkit-flex-direction: row-reverse;
+}
+.button {
+  text-align: center;
+  display: inline;
+  border: 2px solid white;
+  margin-left: 10px;
+}
+.button:hover {
+  background-color: white;
+  color: black;
+}
+
+@keyframes fadeScale {
+  0%   {transform:scale(3);    opacity:0;}
+  50%  {transform:scale(0.75); opacity:0.75;}
+  100% {transform:scale(1);    opacity:1;}
+}
+@keyframes shimmer {
+  0%   {-webkit-filter:brightness(1)}
+  50%  {-webkit-filter:brightness(2)}
+  100% {-webkit-filter:brightness(1)}
+}
+@keyframes shimmerRedPurple {
+  0%   {-webkit-filter:brightness(2); color:purple}
+  50%  {-webkit-filter:brightness(1); color:red}
+  100% {-webkit-filter:brightness(2); color:purple}
+}
+@keyframes shimmerGreenPurple {
+  0%   {-webkit-filter:brightness(2); color:purple}
+  50%  {-webkit-filter:brightness(1); color:lightgreen}
+  100% {-webkit-filter:brightness(2); color:purple}
+}
+@keyframes shimmerWhitePurple {
+  0%   {-webkit-filter:brightness(2); color:purple}
+  50%  {-webkit-filter:brightness(1); color:white}
+  100% {-webkit-filter:brightness(2); color:purple}
+}
+@keyframes slideDownOut {
+  0%   {opacity:0; top: 0%}
+  20%  {opacity:1; top: 40%}
+  80%  {opacity:1; top: 40%}
+  100% {opacity:0; top: 100%}
+}
+@keyframes slideDownPause {
+  0%   {opacity:0; top:-700px}
+  80%  {opacity:1; top: 10%}
+  100% {opacity:1; top: 10%}
+}
+@keyframes slideDownPauseButton {
+  0%   {opacity:0; top:-700px}
+  80%  {opacity:1; top: 13%}
+  100% {opacity:1; top: 13%}
+}
+@keyframes fadeIn {
+  from {opacity: 0}
+  to   {opacity: 1}
+}
+</style>
+
+<div scenario-end-screen-root style="width:100%; height:100%; background-color:rgba(0, 0, 0, 1);">
+  <div id="finish" style="display:none">FINISHED</div>
+
+  <div id="toggle" class="hide" onclick="toggleUI()" style="z-index:1; display:none; position:absolute; top:-600px; left:94%; font-size:30px;">&nbsp;hide&nbsp;</div>
+
+  <div id="info" style="display:none; visibility:visible; z-index:0;">
+    <!--The scenario title-->
+    <div id="scenarioName" style="font-size:60px; text-align:center;"></div>
+    <br>
+
+    <!--The results heading-->
+    <div class="heading" id="resultsHeading" style="font-size:50px; background-color:grey; border:4px solid white; border-bottom:0px; margin-bottom:-22px;"><b>RESULTS</b></div>
+
+    <table class="resultsTable" style="border:4px solid white;">
+      <tr class="row" id="time">
+        <th class="title" id="timeTitle">TIME</th>
+        <th class="data" id="timeData">0:00.000/</th>
+        <th class="medal"><img class="medalImg" id="timeMedal" src="modules/apps/time.png" style="opacity:0.125;"></th>
+      </tr>
+      <br>
+      <tr class="row" id="resets">
+        <th class="title" id="resetsTitle"><b>RESETS</b></th>
+        <th class="data" id="resetsData">0/</th>
+        <th class="medal"><img id="resetsMedal" class="medalImg" src="modules/apps/resets.png" style="opacity:0.125;"></th>
+      </tr>
+    </table>
+
+    <!--The unlocks heading-->
+    <br>
+    <div class="heading" id="unlocksHeading" style="font-size:50px; background-color:grey; border:4px solid white; border-bottom:0px;"><b>UNLOCKS</b></div>
+
+    <!--The unlocks section-->
+    <!--By default, the height will be three lines long if no unlocks are to be displayed-->
+    <div id="unlocks" style="font-size:36px; border:4px solid white; text-align:center;">
+      <br><br><br>
+    </div>
+
+    <!--The navigation buttons-->
+    <!--By default, only has the hub-world button-->
+    <ol id="buttons" style="border:2px white; float:right; font-size:36px;">
+      <li class="button" id="hubWorld">Hub World</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+var colour = "lightgreen";
+var scenarioName = "Scenario Name";
+var difficulty = "BASIC";
+
+/*
+*Adds extra zeros onto the front of a number until it is n digits long
+*/
+function format(value, numDigits) {
+  var strVal = value.toString();
+  var digits = strVal.length;
+
+  if (digits < numDigits) {
+    for (var i = digits; i < numDigits; i++) {
+      strVal = "0" + strVal;
+    }
+  }
+
+  return strVal;
+}
+
+/*
+* Loads a given scenario
+*/
+function loadScenario(filePath) {
+  console.log(true, filePath);
+  // filePath = bngApi.serializeToLua(filePath);
+  // var cmd = "scenario_scenariosLoader.start(scenario_scenariosLoader.loadScenario(" + filePath + ", nil, " + filePath + "))";
+  // bngApi.engineLua(cmd);
+}
+
+/*
+Shows the unlocks
+*/
+function showUnlocks() {
+  var unlocks = document.getElementById("unlocks");
+  var buttons = document.getElementById("buttons");
+
+  var span = "<span style='animation:fadeIn 1s, shimmer 2s linear forwards'>";
+
+  for (let i = 0; i < 3; i++) {
+    if (unlocked[i]) {
+      let scenario = unlocked[i].name;
+      let difficulty = unlocked[i].difficulty;
+
+      var button = document.createElement("li");
+      button.id = scenario;
+      button.className = "button";
+      button.innerHTML = scenario;
+
+      // buttons.innerHTML += "<li class='button' id='" + scenario + "'>" + scenario + "</li>";
+      buttons.appendChild(button);
+
+      span += "NEW TRACK UNLOCKS: " + scenario.toUpperCase() + " <span style='color:" + difficultyToColour(difficulty.replace(/["'\(\)]/g, "")) + "'>" + difficulty.toUpperCase() + "<br>";
+      //Needs to be let specifically so that filePath is a new scoped variable everytime
+      let filePath = "levels/smallgrid/scenarios/gravitationalRacing/tracks/" + scenario.replace(" ", "_").toLowerCase(); + ".json";
+      document.getElementById(scenario).addEventListener("click", function () {loadScenario(filePath)});
+    } else {
+      //Add empty line
+      span += "<br>";
+    }
+  }
+
+  span += "</span>";
+  unlocks.innerHTML = span;
+
+  let filePath = "levels/smallgrid/scenarios/gravitationalRacing/hubworld.json";
+  document.getElementById("hubWorld").addEventListener("click", function () {loadScenario(filePath)});
+
+  shownUnlocks = true;
+}
+
+/*
+*Compares the best, set and goal times
+*/
+function compare(tSet, tGoal, tBest, elementID) {
+  var anim = "";
+  if (tSet <= tGoal) {
+    document.getElementById(elementID).style.color = "lightgreen";
+
+    var medalID = elementID.replace("Data", "Medal");
+    var medalObj = document.getElementById(medalID);
+    medalObj.style.opacity = "1";
+    medalObj.style.animation = "fadeScale 2.5s, shimmer 2s infinite forwards";
+
+    anim = "shimmerGreenPurple";
+  } else {
+    document.getElementById(elementID).style.color = "red";
+    anim = "shimmerRedPurple";
+  }
+
+  //If tBest is not set (ie. new save fie / scenario not tried yet), the values could be 0 (time) or -1 (resets)
+  if (tSet < tBest || (elementID.search("time") === 0 && tBest === 0) || (elementID.search("resets") === 0 && tBest === -1)) {
+    //Display a purple shimmer effects
+    var text = document.getElementById(elementID);
+    text.style.color = "purple";
+    text.style.animation = anim + " 2s infinite forwards";
+    document.getElementById(elementID.replace("Data", "Title")).innerHTML += "<span class='pb'>(PB)</span>";
+  }
+
+  if (!shownUnlocks) {showUnlocks();}
+}
+
+/*
+*toggles the UI from view
+*/
+function toggleUI() {
+  var info = document.getElementById("info");
+  var button = document.getElementById("toggle");
+
+  if (info.style.visibility === "visible") {
+    info.style.visibility = "hidden";
+
+    button.innerHTML = "&nbsp;show&nbsp;";
+    button.className = "show";
+  } else {
+    info.style.visibility = "visible";
+
+    button.innerHTML = "&nbsp;hide&nbsp;";
+    button.className = "hide";
+  }
+}
+
+/*
+*Animates the data graphic to show the value gotten and the target
+*If the value achieved is better than the target, it turns the value green,
+*else turns the value red (to indicate not achieved)
+*@param targetValueFormatted - optional (only applies to times)
+*/
+function animateGraphic(achievedTime, targetValue, currentBest, type, elementID, targetValueFormatted){
+  //The total time it should take to animate the timer
+  const REAL_TIME = 4-3;
+
+  var incrementMultiplier = 0;
+  var t = 0;
+  var currentValue = 0;
+  var pendEnd = false;
+
+  var timer = setInterval(function() {
+    //Since this function updates every 10ms;
+    t += 1/100;
+    // incrementMultiplier = Math.sin(1/(REAL_TIME*2) * t * Math.PI);
+    incrementMultiplier = Math.pow((1/REAL_TIME * t - 1), 3) + 1;
+
+    //Account for e^-x unlikely to ever be 1 exactly
+    if (Math.abs(incrementMultiplier-1) <= Math.pow(10, -6)) {
+      incrementMultiplier = 1;
+      pendEnd = true;
+    }
+
+    currentValue = achievedTime*incrementMultiplier;
+
+    if (type === "time") {
+      //Format for time
+      var milliseconds = format(Math.floor(currentValue) % 1000, 3);
+      var seconds      = format(Math.floor((currentValue / 1000) % 60), 2);
+      var minutes      = Math.floor(currentValue / 1000 / 60).toString();
+
+      document.getElementById(elementID).innerHTML = minutes + ":" + seconds + "." + milliseconds + "/" + targetValueFormatted;
+    } else if (type === "integer") {
+      document.getElementById(elementID).innerHTML = parseInt(currentValue) + "/" + targetValue;
+    }
+
+    if (pendEnd) {
+      clearInterval(timer);
+      compare(currentValue, targetValue, currentBest, elementID);
+    }
+  }, 10);
+}
+
+function displayResults(){
+  animateGraphic(totalTime, timeToBeat, bestTime, "time", "timeData", timeToBeatFormatted);
+
+  animateGraphic(resetsUsed, resetsToBeat, bestResets, "integer", "resetsData");
+
+  document.getElementById("info").removeEventListener("animationend", displayResults);
+
+  document.getElementById("toggle").onclick = toggleUI;
+}
+
+function start() {
+  //Add in the scenario specific details to the results div
+  document.getElementById("scenarioName").innerHTML = "<b>" + scenarioName + " <span style='color:" + colour + ";'>" + difficulty + "</span></b>";
+  document.getElementById("resultsHeading").style["background-color"] = colour;
+  document.getElementById("unlocksHeading").style["background-color"] = colour;
+
+  //Add in speciic data to beat
+  document.getElementById("timeData").innerHTML += timeToBeatFormatted;
+  document.getElementById("resetsData").innerHTML += resetsToBeat;
+
+  //Animate finish div
+  var finish = document.getElementById("finish");
+  finish.style.display = "block";
+  finish.style.animation = "slideDownOut 3s linear forwards";
+
+  //Animate results div after the finish div
+  var info = document.getElementById("info");
+  info.style.display = "block";
+  info.style.animation = "slideDownPause 1.75s linear 2.5s forwards";
+  //Add event listener to call the function for animating the results after the animation has finished
+  info.addEventListener("animationend", displayResults);
+
+  //Animate the button to do with the results div
+  var button = document.getElementById("toggle");
+  button.style.display = "block";
+  button.style.animation = "slideDownPause 1.75s linear 2.5s forwards";
+}
+
+/*
+Returns the colour of the difficulty level
+*/
+function difficultyToColour(difficulty) {
+  if (difficulty === "BASIC") {
+    return "lightgreen";
+  } else if (difficulty === "ADVANCED") {
+    return "gold";
+  } else if (difficulty === "EXPERT") {
+    return "red";
+  } else if (difficulty === "EXTREME") {
+    return "purple";
+  }
+}
+
+
+//TESTING DATA://
+
+//The time just set in the scenario
+var scenarioTime = "7:58:938";
+var sections = scenarioTime.split(":");
+for (var i = 0; i < sections.length; i++) { sections[i] = parseInt(sections[i]); }
+//Convert time to ms
+var totalTime = sections[0]*60*1000 + sections[1]*1000 + sections[2]
+
+//Current best time set
+//8:45:658
+var bestTime = 8*60*1000 + 45*1000 + 658;
+
+// 6:30:000
+var timeToBeat = 6*60*1000 + 30*1000;
+var timeToBeatFormatted = "6:30.000";
+
+var resetsUsed = 6;
+var resetsToBeat = 7;
+var bestResets = 8;
+
+var shownUnlocks = false;
+var unlocked = {1:{name:"track1", difficulty:"basic"}, 2:{name:"track2", difficulty:"basic"}};
+
+start();
+
+</script>
+<!-- </body>
+</html> -->

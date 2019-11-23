@@ -1,0 +1,18 @@
+{
+  "bronze_trophy_bronze" : {
+    "name" : "bronze_trophy_bronze",
+    "mapTo" : "trophy_bronze",
+    "class" : "material",
+    "persistentId" : "b5829f92-f3ec-4490-919d-ae907e6dcdd3",
+    "Stages" : [
+      {
+        "diffuseColor" : [ 0.8039215803146362, 0.498039186000824, 0.1960784047842026, 1 ],
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  }
+}

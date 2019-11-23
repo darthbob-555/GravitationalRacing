@@ -1,0 +1,62 @@
+{
+  "saturn__0018_LightBrown" : {
+    "name" : "saturn__0018_LightBrown",
+    "mapTo" : "0018_LightBrown",
+    "class" : "material",
+    "persistentId" : "65114c32-f86c-4631-ada8-cf434d44c2e9",
+    "Stages" : [
+      {
+        "colorMap" : "ringLightBrown"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "saturn__0042_MediumBrown" : {
+    "name" : "saturn__0042_MediumBrown",
+    "mapTo" : "0042_MediumBrown",
+    "class" : "material",
+    "persistentId" : "1bfb6b05-0b4f-45eb-8758-7f9df17e7db5",
+    "Stages" : [
+      {
+        "colorMap" : "ringMediumBrown"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "saturn__0043_DarkBrown" : {
+    "name" : "saturn__0043_DarkBrown",
+    "mapTo" : "0043_DarkBrown",
+    "class" : "material",
+    "persistentId" : "932e71a1-ca78-414a-807b-053308be2f89",
+    "Stages" : [
+      {
+        "colorMap" : "ringDarkBrown"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "saturn__0137_CharcoalBlack" : {
+    "name" : "saturn__0137_CharcoalBlack",
+    "mapTo" : "0137_CharcoalBlack",
+    "class" : "material",
+    "persistentId" : "1d0ea2c2-1afe-4d9c-9b73-5962af2b153c",
+    "Stages" : [
+      {
+        "colorMap" : "ringBlack"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  }
+}

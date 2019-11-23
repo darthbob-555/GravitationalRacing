@@ -1,0 +1,32 @@
+{
+  "track_collectable_insane__0018_LightBrown" : {
+    "name" : "track_collectable_insane__0018_LightBrown",
+    "mapTo" : "_0018_LightBrown",
+    "class" : "material",
+    "persistentId" : "defeab08-a44a-4551-acd3-0e881326577b",
+    "Stages" : [
+      {
+        "colorMap" : "_0018_LightBrown"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "track_collectable_insane__0137_CharcoalBlack" : {
+    "name" : "track_collectable_insane__0137_CharcoalBlack",
+    "mapTo" : "_0137_CharcoalBlack",
+    "class" : "material",
+    "persistentId" : "c312cfcb-e8d9-4ec5-a5ce-8eaa6bd42816",
+    "Stages" : [
+      {
+        "colorMap" : "_0137_CharcoalBlack"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  }
+}

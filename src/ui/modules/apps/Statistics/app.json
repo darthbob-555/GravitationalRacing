@@ -1,0 +1,19 @@
+{
+  "domElement": "<statistics></statistics>",
+  "name": "Gravitational Racing: Statistics",
+  "types": [
+    "ui.apps.categories.vehicle_info"
+  ],
+  "description": "Statistics for the gravitational racing mod",
+  "css": {
+    "min-width": "500px",
+    "height": "500px",
+    "width": "500px",
+    "right": "0px",
+    "min-height": "500px",
+    "top": "0px"
+  },
+  "author": "Darthbob555",
+  "version": "0.1",
+  "directive": "statistics"
+}

@@ -1,0 +1,17 @@
+{
+  "silver_trophy_slver" : {
+    "name" : "silver_trophy_slver",
+    "mapTo" : "trophy_slver",
+    "class" : "material",
+    "persistentId" : "ad57a033-50a4-495a-955c-6776e183e69a",
+    "Stages" : [
+      {
+        "diffuseColor" : [ 0.7529411911964417, 0.7529411911964417, 0.7529411911964417, 1 ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  }
+}

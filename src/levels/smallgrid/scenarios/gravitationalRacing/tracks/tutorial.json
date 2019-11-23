@@ -1,0 +1,143 @@
+[
+  {
+    "name": "Tutorial (Tutorial)",
+    "description": "...",
+    "previews": ["solarsystem.png"],
+    "type": "race",
+    "authors": "Darthbob555",
+    "restrictToCampaign": true,
+
+    "difficulty": "-1",
+
+    "vehicles": {
+      "scenario_player0": {"playerUsable": true, "startFocus": true },
+      "*": {"playerUsable": false},
+    },
+
+    "whiteListActions": ["default_whitelist_scenario" ],
+    "blackListActions": ["default_blacklist_scenario" ],
+
+    "levelObjects": {
+      "sunsky": {
+        "colorize": "0 0 0 1",
+        "fogScale": "0 0 0 1",
+        "sunScale": "0 0 0 1",
+        "sunSize": "0",
+        "ambientScale": "1 1 1 1"
+      },
+      "theLevelInfo": {
+        "fogDensity": "0"
+      }
+    },
+
+    "introType": "portrait",
+    "portraitImg": {
+      "start": "levels/smallgrid/scenarios/gravitationalRacing/logo.png"
+    },
+    "portraitText": "<link rel='stylesheet' href='tutorial.css'>This tutorial will equip you with the basics on how to play the Gravitational Racing scenarios. <br>An important thing to note that hasn't been shown in this tutorial is what the radial vision fully represents: <ul><li>Outer sphere = 50ms⁻¹</li><li>Middle = 81.6ms⁻¹ → not 100ms⁻¹ since r ∝ d²</li><li>Inner = 150ms⁻¹ → considered the 'danger zone' where your car is unlikely to be able to get out again without assistance</li></ul>Distance to a celestial matters a lot, so being a few metres away can make a big difference to the force.<br>Another thing to mention is that your car will be automatically reset (3s delay) if you hit a moving object.<br><br>For those who are interested in realism, you may want to read the following, overwise ignore it:<label class='show' for='_input'>show/hide</label><input id='_input' type='checkbox'><div><ul><li>Velocities and positions are worked out using gravitational laws and the laws of motion</li><li>Objects rotate at a frequency of 1 day/second ie. Earth's rotation is 1 second long</li><li>Masses are worked out based on their size but are scaled down from their real-life values by 0.000430823 (the Sun of radius 300m = real-life radius)</li><li>Distances between objects are scaled down by 10⁻⁸m</li><li>Fixed dynamic systems assume a perfectly circular path and do not affect the object at the center</li><li>Blackholes and neutron stars have the same mass of the sun but 3x and 2x the density respectively (this is because they are too extreme to be useable ever-wise)</li><li>All velocities are sped up by 2160000x ie. 1 real second = 25 days</li></ul></div>",
+
+    "uilayout": [
+      {
+        "css":{ "right":"0px", "left":"0px", "top":"220px", "width":"690px", "height":"160px", "margin":"auto" },
+        "noCockpit":false,
+        "directive":"raceCountdown",
+        "jsSource":"../../ui/modules/apps/RaceCountdown/app.js",
+        "name":"RaceCountdown",
+        "domElement":"<race-countdown></race-countdown>"
+      },
+      {
+        "name" : "Tacho2",
+        "domElement": "<tacho2></tacho2>",
+        "css": {"width": "300px", "height": "300px", "bottom": "20px", "right": "20px"},
+        "noCockpit":true,
+        "directive": "tacho2",
+        "jsSource": "../../ui/modules/apps/Tacho2/app.js"
+      },
+      {
+        "css":{"position": "absolute", "width":"80%", "height":"80%", "left":"10%", "right":"10%", "bottom":"10%", "top":"10%", "margin":"auto"},
+        "noCockpit":false,
+        "directive":"scenarioEndScreen",
+        "jsSource":"../../ui/modules/apps/ScenarioEndScreen/app.js",
+        "name":"Scenario End Screen",
+        "domElement":"<scenario-end-screen></scenario-end-screen>"
+      },
+      {
+        "domElement":"<forced-induction></forced-induction>",
+        "noCockpit":true,
+        "css":{
+          "right":"20px",
+          "width":"150px",
+          "height":"150px",
+          "bottom":"320px"
+        },
+        "jsSource":"../../ui/modules/apps/Forcedinduction/app.js",
+        "name":"ForcedInduction",
+        "directive":"forcedInduction"
+      },
+      {
+        "directive":"simplePowertrainControl",
+        "css":{
+          "right":"260px",
+          "width":"230px",
+          "position":"absolute",
+          "top":"",
+          "left":"",
+          "height":"170px",
+          "bottom":"0px"
+        },
+        "noCockpit":true,
+        "preserveAspectRatio":true,
+        "jsSource":"../../ui/modules/apps/SimplePowertrainControl/app.js",
+        "name":"Simple Powertrain Control",
+        "domElement":"<simple-powertrain-control></simple-powertrain-control>"
+      },
+      {
+        "directive":"raceTime",
+        "noCockpit":false,
+        "css":{
+          "right":"0px",
+          "width":"150px",
+          "height":"80px",
+          "top":"0px"
+        },
+        "jsSource":"../../ui/modules/apps/RaceTime/app.js",
+        "name":"Race Time",
+        "domElement":"<race-time></race-time>"
+      },
+      {
+        "directive":"raceCheckpoints",
+        "noCockpit":false,
+        "css":{
+          "right":"0px",
+          "left":"0px",
+          "top":"0px",
+          "width":"300px",
+          "height":"40px",
+          "margin":"auto"
+        },
+        "jsSource":"../../ui/modules/apps/RaceCheckPoints/app.js",
+        "name":"Race Check Points",
+        "domElement":"<race-checkpoints></race-checkpoints>"
+      },
+      {
+        "directive":"messages",
+        "noCockpit":false,
+        "css":{
+          "left":"0px",
+          "width":"500px",
+          "height":"400px",
+          "top":"90px"
+        },
+        "jsSource":"../../ui/modules/apps/Messages/app.js",
+        "name":"Messages",
+        "domElement":"<messages></messages>"
+      }
+    ]
+
+    "extensions": ["gravitationalRacing"],
+
+    "lapConfig": ["WayPoint1"],
+    "prefabs": ["tutorial", "waypoint"],
+    "radiusMultiplierAI": 2
+  }
+]

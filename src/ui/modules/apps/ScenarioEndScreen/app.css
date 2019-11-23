@@ -1,0 +1,17 @@
+.app .scenarioEndScreen {
+
+}
+
+@font-face {
+    font-family: Squada One;
+    src: url(../../fonts/SquadaOne-Regular.ttf) format(truetype);
+}
+
+.app .scenarioEndScreen .titleDiv {
+    color: white;
+    font-size:20pt;
+    height:20px;
+    font-family: Squada One;
+    text-align:center;
+    vertical-align:middle;
+}

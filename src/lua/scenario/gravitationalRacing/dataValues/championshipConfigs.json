@@ -1,0 +1,6 @@
+{
+  "Solar GP": {
+    "config": ["Gravity", "Keeping Distance", "Gaseous Affection"],
+    "scoringType": "times"
+  }
+}

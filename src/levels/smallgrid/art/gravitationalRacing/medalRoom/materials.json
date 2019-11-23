@@ -1,0 +1,108 @@
+{
+  "trophy_black" : {
+    "name" : "trophy_black",
+    "mapTo" : "trophy_black",
+    "class" : "material",
+    "persistentId" : "4d6d3c9f-0b06-49ed-8e4d-eb125acb76ee",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/medalRoom/trophy_black.png",
+        "diffuseColor" : [
+          0.9882353544235229,
+          0.9882353544235229,
+          0.9882353544235229,
+          0.00800000037997961
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "materialTag0" : "Miscellaneous",
+    "translucentBlendOp" : "None"
+  },
+  "trophy_diamond" : {
+    "name" : "trophy_diamond",
+    "mapTo" : "trophy_diamond",
+    "class" : "material",
+    "persistentId" : "a28e112e-5f5e-4391-be94-a06e28bacfd2",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/medalRoom/trophy_diamond.png",
+        "diffuseColor" : [
+          0.9882353544235229,
+          0.9882353544235229,
+          0.9882353544235229,
+          0.00800000037997961
+        ],
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "trophy_glass" : {
+    "name" : "trophy_glass",
+    "mapTo" : "trophy_glass",
+    "class" : "material",
+    "persistentId" : "5127ec69-7e80-4c08-9b6c-afe12a05ed0f",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/medalRoom/trophy_glass.png",
+        "diffuseColor" : [ 0.9882353544235229, 0.9882353544235229, 0.9882353544235229, 0.25 ],
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "materialTag0" : "Miscellaneous",
+    "translucent" : true
+  },
+  "trophy_gold" : {
+    "name" : "trophy_gold",
+    "mapTo" : "trophy_gold",
+    "class" : "material",
+    "persistentId" : "b6223c99-58e9-449e-b44e-a50e283ba3b6",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/medalRoom/trophy_gold.png",
+        "diffuseColor" : [
+          0.9882353544235229,
+          0.9882353544235229,
+          0.9882353544235229,
+          0.00800000037997961
+        ],
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  },
+  "trophy_silver" : {
+    "name" : "trophy_silver",
+    "mapTo" : "trophy_silver",
+    "class" : "material",
+    "persistentId" : "1bba2767-d8d1-4b32-a70c-70037cdbe250",
+    "Stages" : [
+      {
+        "colorMap" : "textures/gravitationalRacing/medalRoom/trophy_silver.png",
+        "diffuseColor" : [
+          0.9882353544235229,
+          0.9882353544235229,
+          0.9882353544235229,
+          0.00800000037997961
+        ],
+        "emissive" : true
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp" : "None"
+  }
+}

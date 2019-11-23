@@ -1,0 +1,28 @@
+<div statistics-root id="container">
+  <style>
+    div::-webkit-scrollbar {
+      width: 12px;
+    }
+    div::-webkit-scrollbar-track {
+      background: grey;
+    }
+    div::-webkit-scrollbar-thumb {
+      background: white;
+    }
+
+    .scrollable {
+      overflow: scroll;
+      height: 500px;
+      width: 100%;
+      overflow: auto;
+    }
+    .img {
+      width: 75px;
+      height: 75px;
+    }
+  </style>
+
+  <div class="scrollable" id="data">
+    <table id="information" style="background-color:rgba(0, 0, 0, 0.5); border-collapse:collapse; border-spacing:0;"></table>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+{
+  "Gravity": {
+    "time": "2:00.000",
+    "resets": 2
+  },
+  "Keeping Distance": {
+    "time": "2:30.000",
+    "resets": 2
+  },
+  "Gaseous Affection": {
+    "time": "2:30.000",
+    "resets": 2
+  },
+  "Forceful Descent": {
+    "time": "2:30.000",
+    "resets": 1
+  },
+  "Motorway": {
+    "time": "2:00.000",
+    "resets": 1
+  },
+  "Localised Ovals": {
+    "time": "3:00.000",
+    "resets": 2
+  },
+  "Tipping Point": {
+    "time": "5:30.000",
+    "resets": 3
+  },
+  "Reverberance": {
+    "time": "4:00.000",
+    "resets": 2
+  },
+  "Split Decision": {
+    "time": "3:00.000",
+    "resets": 2
+  },
+  "Rotunda": {
+    "time": "3:00.000",
+    "resets": 3
+  },
+  "Planetary Perils": {
+    "time": "4:45.000",
+    "resets": 3
+  },
+  "Cyclical Inversions": {
+    "time": "6:30.000",
+    "resets": 2
+  },
+  "An Eventful Horizon": {
+    "time": "8:00.000",
+    "resets": 5
+  },
+  "Layered Instability": {
+    "time": "3:00.000",
+    "resets": 3
+  },
+  "Pessimistic Outlook": {
+    "time": "3:40:000",
+    "resets": 3
+  },
+  "Ferocity and Velocity": {
+    "time": "3:45:000",
+    "resets": 3
+  },
+  "Defining Insanity": {
+    "time": "3:35:000",
+    "resets": 2
+  },
+  "Repulsion": {
+    "time": "3:30:000",
+    "resets": 3
+  },
+  "Darkness": {
+    "time": "5:00:000",
+    "resets": 2
+  }
+}
