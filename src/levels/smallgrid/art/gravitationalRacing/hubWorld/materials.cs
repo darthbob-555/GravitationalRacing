@@ -61,8 +61,10 @@ singleton material(gr_level_select_portal)
    animFlags[0] = "0x00000001";
    scrollDir[0] = "0.0689999983 0";
    scrollSpeed[0] = "0.588";
-   emissive[0] = "1";
+   emissive[0] = "0";
    rotSpeed[0] = "0.118000001";
+   diffuseColor[0] = "0.749019623 0.749019623 0.749019623 0.00800000038";
+   glow[0] = "1";
 };
 
 singleton material(gr_level_select_dark_blue)

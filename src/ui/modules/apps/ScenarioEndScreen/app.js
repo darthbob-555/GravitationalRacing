@@ -38,6 +38,10 @@ angular.module('beamng.apps')
           bngApi.engineLua(cmd);
         }
 
+        function loadHubWorld() {
+          loadScenario("levels/smallgrid/scenarios/gravitationalRacing/hubworld.json");
+        }
+
         /*
         *Restarts the current scenario
         */
@@ -49,28 +53,14 @@ angular.module('beamng.apps')
         Shows the buttons
         */
         function showButtons() {
-          var buttons = champName ? document.getElementById("chButtons") : document.getElementById("scButtons");
+          var buttons = document.getElementById("chButtons");
           buttons.style.display = "flex";
 
           //Championships cannot have a round restarted after the end screen
-          if (!champName) {
-            buttons.innerHTML += "<li class='button' id='hubWorld' style='border:2px solid white'>HUB WORLD</li>";
-            document.getElementById("hubWorld").addEventListener("click", function() {loadScenario("levels/smallgrid/scenarios/gravitationalRacing/hubworld.json")}, false);
-
-            buttons.innerHTML += "<li class='button' id='" + scenarioName + "' style='border:2px solid " + colour + "'>RETRY</li>";
-            document.getElementById(scenarioName).addEventListener("click", restartScenario, false);
-          } else {
-            if (!champFinished) {
-              buttons.innerHTML += "<li class='button' id='" + nextScenario.name + "' style='border:2px solid " + nextScenario.colour + "'>NEXT</li>";
+          if (champName && !champFinished) {
+              buttons.innerHTML += "<li class='button' id='ch_" + nextScenario.name + "' style='border:2px solid " + nextScenario.colour + "'>NEXT</li>";
               let filePathNext = nextScenario.filePath;
               document.getElementById(nextScenario.name).addEventListener("click", function() {loadScenario(filePathNext)}, false);
-            } else {
-              buttons.innerHTML += "<li class='button' id='hubWorld' style='border:2px solid white'>HUB WORLD</li>";
-              document.getElementById("hubWorld").addEventListener("click", function() {loadScenario("levels/smallgrid/scenarios/gravitationalRacing/hubworld.json")}, false);
-              // buttons.innerHTML += "<li class='button' id='" + nextScenario.name + "' style='border:2px solid " + nextScenario.colour + "'>NEXT</li>";
-              // let filePathNext = nextScenario.filePath;
-              // document.getElementById(nextScenario.name).addEventListener("click", function() {loadScenario(filePathNext)}, false);
-            }
           }
         }
 
@@ -224,7 +214,7 @@ angular.module('beamng.apps')
             }
           }
 
-          console.error("No driver name ", driver, " in standings ", standings);
+          console.error("No driver named: ", driver, " in standings ", standings);
         }
 
         function positionChangeToString(changes) {
@@ -520,6 +510,8 @@ angular.module('beamng.apps')
           //Add in the championship specific details to the results div
           document.getElementById("championshipName").innerHTML = "<b>" + champName + " <span style='color:" + colour + ";'></span></b>";
 
+          document.getElementById("ch_hubWorld").addEventListener("click", loadHubWorld, false);
+
           var table = document.getElementById("champTable");
 
           var tableHeader = table.rows[0].cells;
@@ -548,11 +540,15 @@ angular.module('beamng.apps')
 
         function setupScenarioScreen() {
           setupScreen("sc");
+
+          document.getElementById("sc_hubWorld").addEventListener("click", loadHubWorld, false);
+          document.getElementById("sc_retry").addEventListener("click", restartScenario, false);
+
           //Add in the scenario specific details to the results div
           document.getElementById("scenarioName").innerHTML = "<b>" + scenarioName + " <span style='color:" + colour + ";'>(" + difficulty + ")</span></b>";
           document.getElementById("unlocksHeading").style["background-color"] = colour;
 
-          //Add in speciic data to beat
+          //Add in specific data to beat
           document.getElementById("timeData").innerHTML += timeToBeatFormatted;
           document.getElementById("resetsData").innerHTML += resetsToBeat;
 

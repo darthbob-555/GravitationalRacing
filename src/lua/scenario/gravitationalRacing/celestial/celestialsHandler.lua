@@ -12,6 +12,7 @@ local unpack = unpack or table.unpack
 
 local celestials = {fixedDynamic = {}, dynamic = {}, static = {}}
 local systems = {}
+local supernovae = {}
 
 local initial = {positions = {length = 0}, scale = {}}
 local passiveMode = false
@@ -172,7 +173,7 @@ end
 
 local function sortDependencies(allCelestials)
 	--[[
-	Returns a table of all celestials based on their 'importantance'
+	Returns a table of all celestials based on their 'importance'
 	This is determined by whether a celestial needs another before it can setup
 	Ie. circumbinary planet needs its two parent stars setup beforehand
 	Note: the specific order does not matter (ie. between two indexes), only that
@@ -208,7 +209,7 @@ local function sortDependencies(allCelestials)
 	--DEBUG
 	if timeout == 0 then
 		print("Failed to append: ")
-		for name, celestial in pairs(allCelestials) do print("   "..name) end
+		for name, _ in pairs(allCelestials) do print("   "..name) end
 	end
 
 	return orderedCelestials.instances
@@ -237,7 +238,7 @@ end
 
 local function setInitialVelocities(sortedCelestials)
 	--[[
-	Sets the initial velocites for all dynamic celestials
+	Sets the initial velocities for all dynamic celestials
 	]]--
 	for _, celestial in ipairs(sortedCelestials) do
 		local parent = celestial:getParentCelestial()
@@ -262,7 +263,7 @@ local function setInitialConditions()
 		for type, table in pairs(celestials) do
 			initial.positions[type] = {}
 			initial.scale[type] = {}
-			for k, celestial in pairs(table) do
+			for k, _ in pairs(table) do
 				local obj = scenetree.findObject(k)
 
 				local objPos = obj:getPosition()
@@ -327,7 +328,7 @@ local function resetCelestials()
 	Setup danger zone areas and delete old trails
 	]]--
 	for type, groupOfCelestials in pairs(celestials) do
-		for k, value in pairs(groupOfCelestials) do
+		for k, _ in pairs(groupOfCelestials) do
 			local instance = celestials[type][k]
 
 			if not passiveMode then
@@ -339,13 +340,22 @@ local function resetCelestials()
 	end
 end
 
+local function startSupernovae()
+	--[[
+	Sets the countdown to begin for all supernovae
+	]]--
+	for _, supernova in ipairs(supernovae) do
+		supernova:prep()
+	end
+end
+
 local function convertToSystemName(p1Name, p2Name)
 	--[[
 	Converts two parents orbiting each other into a system name for them
-	Exmaples:
-	1) star_2,     star_1     -> star_1|2
-	2) star_(1|2), star_3     -> star_(1|2)|3
-	3) star_(1|7), star_(4|6) -> star_(1|7)|(4|6)
+	Examples:
+	1) star_2,     star_1     -> star_(1|2)
+	2) star_(1|2), star_3     -> star_((1|2)|3)
+	3) star_(1|7), star_(4|6) -> star_((1|7)|(4|6))
 	Conventions:
 	Order of singular celestials should be smallest first - see 1)
 	In cases where a system and a singular celestial, the system goes first - see 2)
@@ -372,7 +382,7 @@ local function convertToSystemName(p1Name, p2Name)
 	return type.."("..id1.."|"..id2..")"
 end
 
-local function createInstances()
+local function createInstances(vehicles)
 	--[[
 	Finds and creates instances of every celestial in scenario
 	Returns celestials that need additional usage outside of this function
@@ -385,7 +395,7 @@ local function createInstances()
 	--Stores all children to a parent
 	local children = {}
 
-	local supernovae = {}
+	supernovae = {}
 	local binaries = {}
 
 	for _, celestial in ipairs(foundCelestials) do
@@ -426,7 +436,10 @@ local function createInstances()
 			instance = ClassCelestial.newExotic(unpack(data))
 		elseif class == "supernova" then
 			local supernovaData = {
-				vehicles = vehicles
+				vehicles = vehicles,
+				triggerType = objData.triggerType,
+				timer = objData.timer and tonumber(objData.timer),
+				explosionPower = objData.explosionPower and tonumber(objData.explosionPower)
 			}
 
 			table.insert(data, supernovaData)
@@ -521,7 +534,7 @@ local function createInstances()
 		systems[systemName] = ClassBinarySystem.new(systemName, {p1, p2}, orbitalFrequency)
 	end
 
-	return supernovae, binariesSorted
+	return binariesSorted
 end
 
 local function createCelestials(fullReset, vehicles, passive)
@@ -530,13 +543,11 @@ local function createCelestials(fullReset, vehicles, passive)
 	]]--
 	passiveMode = passive
 
-	--These objects have elements that require other celestials, so cannot be done in for loop or msut be done before others
-	local supernovae = {}
-	local binaries = {}
+	local binariesSorted = {}
 
 	--When loading another scenario, the data here is still stored, so can be used for setting up
 	if fullReset then
-		supernovae, binariesSorted = createInstances()
+		binariesSorted = createInstances(vehicles)
 	else
 		resetCelestials()
 	end
@@ -588,7 +599,7 @@ local function initCelestials()
 		systemInstance:setupComponentPaths()
 	end
 
-	for name, instance in pairs(allCelestials) do
+	for _, instance in pairs(allCelestials) do
 		local parentName = instance:getParentCelestial()
 		local parent
 		if parentName then
@@ -855,8 +866,8 @@ local function printResults()
 	local celestialInfo = {}
 	local keys = ClassCelestial.toListKeys()
 
-	for k, t in pairs(celestials) do
-		for k2, instance in pairs(t) do
+	for _, t in pairs(celestials) do
+		for _, instance in pairs(t) do
 			table.insert(celestialInfo, instance:toList())
 		end
 	end
@@ -879,6 +890,7 @@ M.findNextName = findNextName
 M.findCelestialMatch = findCelestialMatch
 M.callMethodOnCelestials = callMethodOnCelestials
 M.getOrbitalVelocity = getOrbitalVelocity
+M.startSupernovae = startSupernovae
 M.convertToSystemName = convertToSystemName
 -- M.enablePassiveMode = enablePassiveMode
 -- M.disablePassiveMode = disablePassiveMode

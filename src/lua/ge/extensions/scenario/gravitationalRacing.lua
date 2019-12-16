@@ -29,7 +29,7 @@ end
 
 local function onRaceStart()
   begin()
-  scenarioController.setMoving()
+  scenarioController.start()
 end
 
 local function onScenarioRestarted()
@@ -42,7 +42,7 @@ local function onScenarioChange(sc)
     if not sc.sourceFile:find("hubworld") then
       scenarioController.onScenarioChange(sc)
 
-      --Hide the floor
+      --Hide the floor(s)
       local ground = scenetree.findClassObjects('Groundplane')
       for _, name in ipairs(ground) do
         scenetree.findObject(name).hidden = true

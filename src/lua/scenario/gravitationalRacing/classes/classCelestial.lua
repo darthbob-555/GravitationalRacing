@@ -60,7 +60,7 @@ end
 local function getAllCelestials(categorised)
   --[[
   Returns all celestial names
-  categorised returns them in categories, else flatterns to a single table
+  categorised returns them in categories, else flattens to a single table
   ]]--
   local celestials = {
     planet = {"mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"},
@@ -157,7 +157,7 @@ function ClassCelestial:new(name, type, scale, objectType, orbitingBody, passive
   self.position     = ClassVector.new(0, 0, 0)
   self.velocity     = ClassVector.new(0, 0, 0)
 
-  --Since the framerate will change, this is used to scale the velocity appropriately
+  --Since the frame-rate will change, this is used to scale the velocity appropriately
   self.frameTime = 1
 
   --Only used with objectType = "dynamic"
@@ -333,7 +333,6 @@ function ClassCelestial:reset()
   Resets the celestial back to its starting state
   TODO - consider resetting the pos, mass, scale, radius + display here instead of in celestialsHandler?
   ]]--
-  self:destroyTrail()
   self:resetPath()
   self.acceleration:zero()
   self.velocity:zero()
@@ -341,6 +340,7 @@ function ClassCelestial:reset()
   self.isDestroyed = false
   self.delayed = self.isDelayed
   self.mass = self.initMass
+  self:setBurning(false)
 
   --Reset back to test
   if self.model ~= self.initModel then
@@ -386,7 +386,7 @@ end
 function ClassCelestial:removeFromScene()
   --[[
   Removes the celestial from view and prevents it doing anything
-  Note: The object is not deleted from the scenario (unless told to explicity),
+  Note: The object is not deleted from the scenario (unless told to explicitly),
   only positioned away from view, and reduced to 0 scale so it cannot be seen or h
   ave any effect
   This is because it is computationally expensive to delete and create a
@@ -429,7 +429,11 @@ function ClassCelestial:removeFromScene()
   end
 
   self:setBurning(false)
-  self:destroyTrail()
+
+  if self.path then
+    --Hide trail
+    self.path:updateTrail(false)
+  end
 
   if self.label then
     self.label:move(ClassVector.new(10000, -10000, 10000))
@@ -1211,6 +1215,8 @@ function ClassSupernova:new(name, type, scale, objectType, orbitingBody, passive
 
   local self = ClassCelestial:new(name, type, scale, objectType, orbitingBody, passive, delayed, rotation)
 
+  local explosionPower = supernovaData.explosionPower
+
   local constants = {
     --The time it takes to collapse the core of the star
     COLLAPSE_PERIOD = 0.0625,
@@ -1224,7 +1230,9 @@ function ClassSupernova:new(name, type, scale, objectType, orbitingBody, passive
     --When the timer reaches this point, the player will get a warning
     WARNING_TIME = 10,
     --How far the outer-most cloud can reach
-    MAX_CLOUD_SCALE = self.initScale * 25,
+    MAX_CLOUD_SCALE = self.initScale * 25 * explosionPower,
+    --The distance ( from 0(exclusive) [center of supernova] -> 1 [edge of cloud]) at which max acceleration will be applied to vehicles
+    MAX_ACCEL_RANGE = 0.66,
     --Which cloud will burn planets within it
     HEAT_RANGE = 4,
     --Which cloud will destroy planets within it
@@ -1250,7 +1258,9 @@ function ClassSupernova:new(name, type, scale, objectType, orbitingBody, passive
   local S = function(t) return -(t/T + 1)^-10 + 1 end
 
   --Function for the outward acceleration applied to vehicles
-  local A = function(d) return 300*(1 - (d/constants.MAX_CLOUD_SCALE)) end
+  local A = function(d)
+    return math.min(300, 300 * 1/(1-constants.MAX_ACCEL_RANGE) * (1 - d/(constants.MAX_CLOUD_SCALE*0.03) ))
+  end
 
   local vehicles = {}
   --Each vehicle will only be affected once by the supernova
@@ -1258,11 +1268,19 @@ function ClassSupernova:new(name, type, scale, objectType, orbitingBody, passive
     vehicles[n] = {instance = instance, affected = false}
   end
 
+  local triggerType = "countdown"
+  --THe trigger specified should be a known type (if not, apply default)
+  for _, v in ipairs({"countdown", "checkpoint"}) do
+    if supernovaData.triggerType == v then
+      triggerType = v
+    end
+  end
+
   self.supernovaData = {
     constants    = constants,
-    triggerType  = supernovaData.triggerType or "countdown",
+    triggerType  = triggerType or "countdown",
     initTimer    = supernovaData.timer       or 20,
-    phase        = "waiting",
+    phase        = "initialised",
     targetType   = targetType,
     targetScale  = targetScale,
     scaleChange  = (scale - targetScale) * 1/constants.COLLAPSE_PERIOD,
@@ -1339,6 +1357,13 @@ function ClassSupernova:goSupernova()
   self.supernovaData.phase = "collapse"
 end
 
+function ClassSupernova:prep()
+  --[[
+  Starts the countdown (if there is one)
+  ]]--
+  self.supernovaData.phase = "waiting"
+end
+
 function ClassSupernova:update(dt)
   --[[
   Responsible for changing states when applicable and causing the supernova (if triggerType = countdown)
@@ -1361,7 +1386,7 @@ function ClassSupernova:update(dt)
         helper.flashUiMessage("Supernova Imminent!", 5)
         data.warned = true
 
-        --Place at positon of celestial
+        --Place at position of celestial
         TorqueScript.eval(self.name..'_supernova_warning.position = "'..self.position:getX()..' '..self.position:getY()..' '..self.position:getZ()..'";')
       elseif data.warned then
         if self.objectType ~= "static" then
@@ -1389,8 +1414,11 @@ function ClassSupernova:update(dt)
     --Subtract the loss of mass from the explosion and update the model
     self:setMassRelative(1 - data.constants.MASS_LOSS)
     self:changeModel(data.targetType)
+
     --Update the radial vision
-    self:displayRadialZones()
+    if not self.isPassive then
+      self:displayRadialZones()
+    end
 
     --Position the clouds at the necessary points
     for i = 1, 5 do
@@ -1450,9 +1478,17 @@ function ClassSupernova:update(dt)
 
         if not vehicleData.affected and dist <= radiusOfCloud then
           local accelMag = cloudData.A(dist)
+          --Maintain direction vector but set magnitude and reverse direction
           local accel = distVec:toUnitVector():multiply(-accelMag)
 
-          instance:addAcceleration(accel, 1)
+          local distRatio = dist / (data.constants.MAX_CLOUD_SCALE*0.03)
+
+          instance:addAcceleration(accel, 3 - distRatio*2)
+
+          --If the vehicle is in the second cloud, ignite the vehicle
+          if distRatio <= 0.4 then
+            instance:ignite()
+          end
 
           --Don't apply another lot of acceleration
           vehicleData.affected = true
@@ -1472,8 +1508,6 @@ function ClassSupernova:update(dt)
       TorqueScript.eval(self.name..'_gasCloud_'..i..'.scale = "0 0 0";')
     end
 
-    TorqueScript.eval(self.name..'_supernova_warning.scale = "0 0 0";')
-
     data.phase = "finished"
   end
 end
@@ -1486,7 +1520,7 @@ function ClassSupernova:reset()
 
   local data = self.supernovaData
   data.timer = data.initTimer
-  data.phase = "waiting"
+  data.phase = "initialised"
   data.warned = false
   data.gasCloudData.time = 0
 
@@ -1498,8 +1532,6 @@ function ClassSupernova:reset()
   for i = 1, 5 do
     TorqueScript.eval(self.name..'_gasCloud_'..i..'.scale = "0 0 0";')
   end
-
-  self:displayRadialZones()
 end
 
 function ClassSupernova:instanceOf()

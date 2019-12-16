@@ -107,7 +107,7 @@ end
 
 local function setupScenarios()
   --[[
-  Sets up the scenarios by locking those which are not avaiable to the player,
+  Sets up the scenarios by locking those which are not available to the player,
   placing the medals achieved and indicating new scenarios which have been unlocked
   ]]--
   local scenarios = saveFileData.scenarios
@@ -131,18 +131,18 @@ local function setupScenarios()
   end
 end
 
-local function setupScenary()
+local function setupScenery()
   --[[
-  Shows the applicable scenary, based on the scenarios completed
+  Shows the applicable scenery, based on the scenarios completed
   ]]--
-  local scenaryMap = jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/trackRequirementMap.json"))
+  local sceneryMap = jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/trackRequirementMap.json"))
   for scName, data in pairs(saveFileData.scenarios) do
-    --All objects are placed correctly in the prefab, so remove not achieved scenary
+    --All objects are placed correctly in the prefab, so remove not achieved scenery
     if not data.completed then
-      local scenary = scenaryMap[scName].hubworld
-      --Not all scenarios unlock scenary
-      if scenary then
-        for _, objName in ipairs(scenary) do
+      local scenery = sceneryMap[scName].hubworld
+      --Not all scenarios unlock scenery
+      if scenery then
+        for _, objName in ipairs(scenery) do
           local obj = celestialsHandler.findCelestial(objName, nil)
           --May already have been deleted
           if obj then
@@ -167,7 +167,7 @@ local function setupSideInfo()
   local i = 1
   for k, _ in pairs(targetData) do
     local saveData = fileData[k] or error("No savedata is stored for track="..tostring(k or "nil"))
-    --Only show if that sceanrio has been unlocked
+    --Only show if that scenario has been unlocked
     if saveData.unlocked then
       local sourceFile = sourceFiles[scenarioNameToTrigger(k):gsub("sc_", "")]
 
@@ -225,7 +225,7 @@ local function uiRequest(request, params)
 
     return {show}
   else
-    log("E", "uiRequest(): Unkown request! [request="..(request or "nil"))
+    log("E", "uiRequest(): Unknown request! [request="..(request or "nil"))
   end
 end
 
@@ -322,7 +322,7 @@ local function onPreRender(dt)
           local dist = math.sqrt((vehPos:getX()-objPos.x)^2 + (vehPos:getY()-objPos.y)^2 + (vehPos:getZ()-objPos.z)^2)
 
           if dist <= 20 then
-            local data = {}
+            local trackData = {}
 
             --Show scenario info to user
             if objName ~= "sc_solar_system_simulation" then
@@ -372,7 +372,7 @@ local function onPreRender(dt)
               end
 
               if name == "Tutorial" then
-                data = {
+                trackData = {
                   scenarioName = name,
                   difficulty = {
                     type = difficulty,
@@ -380,7 +380,7 @@ local function onPreRender(dt)
                   }
                 }
               else
-                data = {
+                trackData = {
                   scenarioName = name,
                   difficulty = {
                     type = difficulty,
@@ -399,7 +399,7 @@ local function onPreRender(dt)
                 }
               end
             else
-              data = {
+              trackData = {
                 scenarioName = "Solar System Simulation",
                 difficulty = {
                   type = "Simulation",
@@ -409,9 +409,9 @@ local function onPreRender(dt)
             end
 
             --Update the UI
-            guihooks.trigger("displayTrackInfo", data)
+            guihooks.trigger("displayTrackInfo", trackData)
 
-            --Prevent unecessary looping of this code with data is being displayed
+            --Prevent unnecessary looping of this code with data is being displayed
             display.displaying = true
             display.scenario = objName
           end
@@ -441,7 +441,7 @@ local function onBeamNGTrigger(data)
       local championshipName = triggerNameFormatted(data.triggerName)
       local config = jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/championshipConfigs.json"))[championshipName].config
 
-      --Continue where the chamnpionship left off (starts anew automatically in savefile)
+      --Continue where the championship left off (starts anew automatically in savefile)
       local scenarioNum = fileHandler.readSectionFromFile("championships")[championshipName].currentData.currentScenario
 
       local scenarioName = config[scenarioNum]
@@ -525,10 +525,10 @@ local function onScenarioChange(sc)
     setupSourceFiles()
 
     setupScenarios()
-    setupScenary()
+    setupScenery()
     be:reloadStaticCollision()
 
-    --Happens after setupScenary to save creating and deleting trails or non-shown celestials (which is expensive to do so)
+    --Happens after setupScenery to save creating and deleting trails or non-shown celestials (which is expensive to do so)
     celestialsHandler.initCelestials()
     celestialsHandler.printResults()
 

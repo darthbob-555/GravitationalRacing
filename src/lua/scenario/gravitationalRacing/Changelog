@@ -1,3 +1,11 @@
--Fixed saving not working
--Stars now have the material attribute emissive so will now show up at night
--Added some internal functionality to allow the Celestial Creator to work
+-Fixed track overview not showing in hub-world
+-Fixed player being spawned in the wrong place in Layered Instability
+-Fixed trails disappearing after resetting a scenario
+-Fixed end-screen UI's buttons not working when clicked
+-Some code cleanup/general improvements:
+  -Better handling of laps
+  -Cleanup of function descriptions
+-Adjust portal texture in the hubworld
+-Added in a new celestial type - supernova, as well as 2 new scenarios with this celestial type:
+  -Explosive Force (Advanced)
+  -Ticking Timebomb (Expert)

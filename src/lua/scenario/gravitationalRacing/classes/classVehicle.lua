@@ -20,7 +20,7 @@ function ClassVehicle:new(name, position)
   self.initialPosition = self.position:clone()
   self.acceleration = ClassVector.new(0, 0, 0)
   self.forcedAccel = {}
-  self.maxAccel = 200
+  self.maxAccel = 300
   self.isBoosting = false
 
   self.obj = scenetree.findObject(name)
@@ -193,8 +193,7 @@ function ClassVehicle:update(dt)
         if self.freeroamReset then
           TorqueScript.eval(self.name..'.position = "'..self.initialPosition:getX()..' '..self.initialPosition:getY()..' '..self.initialPosition:getZ()..'";')
 
-          --Fix vehicle and reset its phyiscs
-          local vehObj = self.obj
+          --Fix vehicle and reset its physics
           vehObj:requestReset(RESET_PHYSICS)
           vehObj:resetBrokenFlexMesh()
         else

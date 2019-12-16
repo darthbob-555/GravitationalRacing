@@ -64,7 +64,7 @@
     "hubworld": ["planet_31", "planet_32", "planet_33"]
   },
   "An Eventful Horizon": {
-    "unlocks": ["Solar System Simulation", "Repulsion"],
+    "unlocks": ["Solar System Simulation", "Repulsion", "Explosive Force"],
     "price": 18,
     "hubworld": ["planet_34", "planet_35", "planet_36"]
   },
@@ -96,8 +96,18 @@
     "hubworld": ["star_7", "star_11", "star_12", "star_13"]
   },
   "Darkness": {
-    "unlocks": [],
+    "unlocks": ["Ticking Timebomb"],
     "price": 30,
+    "hubworld": []
+  },
+  "Explosive Force": {
+    "unlocks": [],
+    "price": 32,
+    "hubworld": []
+  },
+  "Ticking Timebomb": {
+    "unlocks": [],
+    "price": 32,
     "hubworld": []
   }
 }

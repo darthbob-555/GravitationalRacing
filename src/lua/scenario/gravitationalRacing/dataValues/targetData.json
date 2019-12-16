@@ -74,5 +74,13 @@
   "Darkness": {
     "time": "5:00:000",
     "resets": 2
+  },
+  "Explosive Force": {
+    "time": "3:55:000",
+    "resets": 2
+  },
+  "Explosive Force": {
+    "time": "3:00:000",
+    "resets": 2
   }
 }

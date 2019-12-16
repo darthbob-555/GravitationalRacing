@@ -18,7 +18,7 @@ local finished = false
 
 local currentCheckpointNum, totalCheckpointNum = 0, 0
 
-local nextnextCheckpointInstances = {}
+local nextCheckpointInstances = {}
 
 local resets = 0
 local sourceFile = ""
@@ -168,7 +168,7 @@ local function triggerCheckpoint(checkpointNum)
   end
 
   for _, v in ipairs(toChangeState) do
-    --Split routes have checkpoints seperated in their own tables
+    --Split routes have checkpoints separated in their own tables
     if type(v) == "table" then
       for _, v2 in ipairs(v) do
         changeState(v2, "next")
@@ -210,7 +210,7 @@ local function resetToCheckpoint(vehicle)
   TorqueScript.eval(vehName..'.position = "'..position:getX()..' '..position:getY()..' '..position:getZ()..'";')
   TorqueScript.eval(vehName..'.rotation = "'..vehRot.x..' '..vehRot.y..' '..vehRot.z..' '..vehRot.w..'";')
 
-  --Fix vehicle and reset its phyiscs
+  --Fix vehicle and reset its physics
   local vehObj = vehicle:getObj()
   vehObj:requestReset(RESET_PHYSICS)
   vehObj:resetBrokenFlexMesh()
@@ -219,7 +219,7 @@ end
 local function setupCheckpointConfig()
   --[[
   Creates the checkpoint configuration
-  NOTE:
+  NOTES:
     -For the algorithm to work, the split routes MUST be in order of pathID,
     otherwise it will not setup properly
     ie. cp12, cp13 should have pathIDs 1, 2 respectively
@@ -228,43 +228,43 @@ local function setupCheckpointConfig()
   local cpConfig = {}
 
   local index = 1
-  --Repeats for every lap
-  for lap = totalLaps or 1, 1, -1 do
-    --Creates a lap config for a single lap
-    for i = 1, tableComp.lengthOfTable(checkpoints)-1 do
-      local instance = checkpoints["checkpoint"..i]
-      local name = checkpoints["checkpoint"..i]:getName()
+  --Creates a lap config for a single lap
+  for i = 1, tableComp.lengthOfTable(checkpoints)-1 do
+    local instance = checkpoints["checkpoint"..i]
+    local name = checkpoints["checkpoint"..i]:getName()
 
-      if instance:isAlternativeCheckpoint() then
-        local splitId = instance:getPathID()
+    --TODO get one lap and multiply
 
-        --If a table has not been setup for a split route
-        if not cpConfig[index] then
-          table.insert(cpConfig, {})
-        end
+    if instance:isAlternativeCheckpoint() then
+      local splitId = instance:getPathID()
 
-        --If the split route table has not been setup
-        if not cpConfig[index][splitId] then
-          table.insert(cpConfig[index], {name})
-        else
-          table.insert(cpConfig[index][splitId], name)
-        end
+      --If a table has not been setup for a split route
+      if not cpConfig[index] then
+        table.insert(cpConfig, {})
+      end
+
+      --If the split route table has not been setup
+      if not cpConfig[index][splitId] then
+        table.insert(cpConfig[index], {name})
       else
-        --If the last index was a split route, add one to show that this cp is not part of the split route
-        if type(cpConfig[index]) == "table" then
-          index = index + 1
-        end
-
-        table.insert(cpConfig, name)
+        table.insert(cpConfig[index][splitId], name)
+      end
+    else
+      --If the last index was a split route, add one to show that this cp is not part of the split route
+      if type(cpConfig[index]) == "table" then
         index = index + 1
       end
-    end
 
-    --Add the first checkpoint to the end, since this is a lapped race
-    if totalLaps > 1 then
-      table.insert(cpConfig, "checkpoint0")
+      table.insert(cpConfig, name)
       index = index + 1
     end
+  end
+
+  if totalLaps > 1 then
+    --Add in the last checkpoint (which will be the first again) for that lap
+    table.insert(cpConfig, "checkpoint0")
+    --Repeat the single lap for the total number of laps
+    cpConfig = tableComp.repeatTable(cpConfig, totalLaps)
   end
 
   printCps = function(cps)
@@ -289,7 +289,6 @@ local function setupCheckpointConfig()
     end
   end
 
-  --Prints the Checkpoint Config config
   local sCpConfig = ""
   for i, cps in ipairs(cpConfig) do
     if i == 1 then
@@ -307,7 +306,7 @@ local function findCheckpoints()
   --[[
   Finds all checkpoints in the scenario
   ]]--
-  local checkpoints = {}
+  local cps = {}
 
   --Checkpoint 0 is the start platform
   local i = 0
@@ -321,7 +320,7 @@ local function findCheckpoints()
     rot = quat(rot.x, rot.y, rot.z, rot.w)
     rot = rot:toTorqueQuat()
 
-    checkpoints[name] = ClassCheckpoint.new(obj:getPosition(), rot, obj.scale, obj.direction, i, state, i == 0, obj.pathID, obj.closeOn)
+    cps[name] = ClassCheckpoint.new(obj:getPosition(), rot, obj.scale, obj.direction, i, state, i == 0, obj.pathID, obj.closeOn)
 
     i = i + 1
     name = "checkpoint"..i
@@ -329,12 +328,12 @@ local function findCheckpoints()
   end
 
   --The last checkpoint is the ending one (only applies to p-to-p races)
-  if totalLaps == 1 and checkpoints["checkpoint"..(i-1)] then
+  if totalLaps == 1 and cps["checkpoint"..(i-1)] then
     --i-1 since the while loop has not found i=i+1
-    checkpoints["checkpoint"..(i-1)]:setEndCheckpoint(true)
+    cps["checkpoint"..(i-1)]:setEndCheckpoint(true)
   end
 
-  return checkpoints
+  return cps
 end
 
 local function getCurrentLap()
@@ -440,7 +439,7 @@ local function update(running, vehicle, dt)
 
     for _, v in ipairs(nextCheckpointInstances) do
       local reachedNextCp = false
-      --Split routes are in seperated tables inside this table
+      --Split routes are in separated tables inside this table
       if type(v) == "table" then
         for _, v2 in ipairs(v) do
           trigger(v2)

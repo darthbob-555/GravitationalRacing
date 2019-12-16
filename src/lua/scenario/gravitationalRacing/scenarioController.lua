@@ -63,7 +63,6 @@ local function resetVehicle(vehicle)
   --[[
   Resets the vehicle, given the vehicle name
   ]]--
-  --Note: this will always be false for a sceanrio outside of these mod scenarios
   if vehicles[vehicle] then
     vehicles[vehicle]:scheduleReset()
   end
@@ -84,6 +83,14 @@ local function setMoving()
   Sets delayed celestials moving
   ]]--
   celestialsHandler.callMethodOnCelestials(nil, "setDelayed", {false})
+end
+
+local function start()
+  --[[
+  Sets any delayed celestials moving and sets the countdown for supernovae
+  ]]--
+  setMoving()
+  celestialsHandler.startSupernovae()
 end
 
 local function initialise(srcFile)
@@ -130,6 +137,7 @@ M.setSourceFile = setSourceFile
 M.getSourceFile = getSourceFile
 M.resetVehicle = resetVehicle
 M.setMoving = setMoving
+M.start = start
 M.initialise = initialise
 M.onScenarioChange = onScenarioChange
 return M

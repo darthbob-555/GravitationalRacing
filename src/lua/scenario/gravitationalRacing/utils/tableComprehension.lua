@@ -251,6 +251,26 @@ local function removeKey(T, K)
   return T
 end
 
+local function repeatTableFrom(T, originalT, n)
+  --[[
+  A helper function for the function duplicate, which adds the
+  contents in originalT to T n times
+  ]]--
+  if n == 1 then
+    return T
+  end
+
+  return repeatTableFrom(mergeAppend(T, originalT), originalT, n-1)
+end
+
+local function repeatTable(T, n)
+  --[[
+  Repeats the entries in a table T n times
+  Uses a helper function to provide a simpler interface
+  ]]--
+  return repeatTableFrom(T, T, n)
+end
+
 M.mergeAppend = mergeAppend
 M.merge = merge
 M.lengthOfTable = lengthOfTable
@@ -261,4 +281,5 @@ M.flatten = flatten
 M.containsIndex = containsIndex
 M.getSmallestValue = getSmallestValue
 M.removeKey = removeKey
+M.repeatTable = repeatTable
 return M

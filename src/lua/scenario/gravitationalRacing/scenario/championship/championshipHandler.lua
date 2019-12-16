@@ -10,9 +10,9 @@ local BEST_MULTI = 100
 local WORST_MULTI = 150
 
 local AI_PERSONAILITIES = {
-  {name = "nu scorpii", skillLevel = 1},
+  {name = "", skillLevel = 1},
   {name = "the legendary bob", skillLevel = 2},
-  {name = "xi tauri"  , skillLevel = 3},
+  {name = ""  , skillLevel = 3},
   {name = "infinite"    , skillLevel = 4}
 }
 
