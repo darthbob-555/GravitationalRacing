@@ -4,8 +4,8 @@ local ClassVector       = require("scenario/gravitationalRacing/classes/classVec
 local ClassKey          = require("scenario/gravitationalRacing/classes/classKey")
 local ClassCollectable  = require("scenario/gravitationalRacing/classes/classCollectable")
 local scenarioDetails   = require("scenario/gravitationalRacing/scenario/scenarioDetails")
-local tableComp         = require("scenario/gravitationalRacing/utils/tableComprehension")
 local fileHandler       = require("scenario/gravitationalRacing/utils/fileHandler")
+local errorHandler      = require("scenario/gravitationalRacing/utils/errorHandler")
 
 local items = {}
 
@@ -53,7 +53,12 @@ end
 local function resetKeysAfterReset(checkpoint, lap)
   --[[
   Resets any keys unlocked after the last checkpoint
+  Parameters:
+    checkpoint - the checkpoint to use as reference
+    lap        - the lap to use as reference
   ]]--
+  errorHandler.assertNil(checkpoint, lap)
+
   for _, instance in ipairs(items.key) do
     if instance:isCollected() then
       local data = instance:getCollectedOnData()
@@ -66,7 +71,8 @@ end
 
 local function hasCollectedCollectables()
   --[[
-  Returns the collectables collected
+  Returns:
+   collected - the collectables collected
   ]]--
   local collected = {}
   for i, instance in ipairs(items.collectable) do
@@ -81,9 +87,16 @@ local function update(vehicle, dt, currentCheckpoint, currentLap)
   Checks and monitors the keys' and collectables' distances to the vehicle, and activates the keys
   if the vehicle gets within range of the key/collectable.
   This function also animates them and, if collected, is responsible for triggering the opening of
-  the barriers at the appropiate range of the vehicle and also triggering the closing of said barriers
+  the barriers at the appropriate range of the vehicle and also triggering the closing of said barriers
+  Parameters:
+    vehicle           - the vehicle to check distances with
+    dt                - the time since the last frame
+    currentCheckpoint - the current checkpoint
+    currentLap        - the currentLap
   ]]--
-  for type, instances in pairs(items) do
+  errorHandler.assertNil(vehicle, dt, currentCheckpoint, currentLap)
+
+  for _, instances in pairs(items) do
     for _, instance in ipairs(instances) do
       instance:update(dt, vehicle:getPosition(), currentCheckpoint, currentLap)
     end
@@ -93,6 +106,8 @@ end
 local function findAllItems()
   --[[
   Finds all keys/collectables in the scenario
+  Returns:
+    foundItems - a list of all items found and their useful data
   ]]--
   local types = {"key", "collectable"}
   local foundItems = {}
@@ -124,6 +139,8 @@ end
 local function createAllItems(scName)
   --[[
   Finds and creates the key objects
+  Parameters:
+    scName - the name of the scenario
   ]]--
   items = {}
   local foundItems = findAllItems()
@@ -153,8 +170,7 @@ local function printResults()
   --[[
   Prints all keys and objects found
   ]]--
-  print()
-  print("Collectables Found:")
+  print("\nCollectables Found:\n")
   for _, instances in pairs(items) do
     for _, instance in ipairs(instances) do
       print(instance:toString())
@@ -165,6 +181,9 @@ end
 local function initialise(fullReset, srcFile)
   --[[
   Setups the script
+  Parameters:
+    fullReset - whether it is a full reset or not
+    srcFile   - the source file of the scenario loaded
   ]]--
   if fullReset then
     local scenarioName = scenarioDetails.getScenarioDetails(srcFile)
@@ -175,8 +194,6 @@ local function initialise(fullReset, srcFile)
   else
     resetAllItems()
   end
-
-  printResults()
 end
 
 M.resetAllItems = resetAllItems
@@ -186,5 +203,6 @@ M.initCollectables = initCollectables
 M.resetKeysAfterReset = resetKeysAfterReset
 M.hasCollectedCollectables = hasCollectedCollectables
 M.update = update
+M.printResults = printResults
 M.initialise = initialise
 return M

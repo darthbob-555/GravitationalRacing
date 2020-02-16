@@ -4,6 +4,7 @@
 
 local M = {}
 
+local errorHandler        = require("scenario/gravitationalRacing/utils/errorHandler")
 local ClassVehicle        = require("scenario/gravitationalRacing/classes/classVehicle")
 local shortcutHandler     = require("scenario/gravitationalRacing/scenario/track/shortcutHandler")
 local celestialsHandler   = require("scenario/gravitationalRacing/celestial/celestialsHandler")
@@ -38,6 +39,12 @@ local sourceFile = ""
 ---------
 
 local function update(dt, start)
+  --[[
+  Updates the scenario, by calling various modules' update functions
+  Parameters:
+    dt    - the time since the last frame
+    start - whether the scenario has started
+  ]]--
   if vehicles.scenario_player0 then
     celestialsHandler.update(start, vehicles, dt)
     checkpointsHandler.update(start, vehicles.scenario_player0, dt)
@@ -51,6 +58,12 @@ local function onScenarioRestarted()
 end
 
 local function setSourceFile(srcFile)
+  --[[
+  Sets the scenario's file directory that is being used
+  Parameters:
+    sourceFile - the file directory to use
+  ]]--
+  errorHandler.assertNil(srcFile)
   sourceFile = srcFile
   checkpointsHandler.setSrcFile(srcFile)
 end
@@ -59,22 +72,30 @@ local function getSourceFile()
   return sourceFile
 end
 
-local function resetVehicle(vehicle)
+local function resetVehicle(vehicleName)
   --[[
   Resets the vehicle, given the vehicle name
+  Parameters:
+    vehicle - the name of the vehicle
   ]]--
-  if vehicles[vehicle] then
-    vehicles[vehicle]:scheduleReset()
+  errorHandler.assertNil(vehicleName)
+  if vehicles[vehicleName] then
+    vehicles[vehicleName]:scheduleReset()
+  else
+    log("W", "scenarioController:resetVehicle()", vehicleName.." is not a known vehicle")
   end
 end
 
-local function resetVehiclePos(vehicle)
+local function resetVehiclePos(vehicleName)
   --[[
   Resets a vehicle's internal pos
   This prevents the car from triggering anything while a scenario restart takes place
   ]]--
-  if vehicles[vehicle] then
-    vehicles[vehicle]:resetPosition()
+  errorHandler.assertNil(vehicleName)
+  if vehicles[vehicleName] then
+    vehicles[vehicleName]:resetPosition()
+  else
+    log("W", "scenarioController:resetVehicle()", vehicleName.." is not a known vehicle")
   end
 end
 
@@ -94,6 +115,8 @@ local function start()
 end
 
 local function initialise(srcFile)
+  errorHandler.assertNil(srcFile)
+
   local fullReset = sourceFile ~= srcFile
 
   if not vehicles.scenario_player0 or fullReset then
@@ -112,6 +135,7 @@ local function initialise(srcFile)
     checkpointsHandler.printResults()
     --Setup shortcuts
     shortcutHandler.initialise(fullReset, srcFile)
+    shortcutHandler.printResults()
   end
 
   celestialsHandler.initCelestials()

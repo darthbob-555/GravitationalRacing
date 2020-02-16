@@ -1,22 +1,22 @@
 ClassCelestial = {}
 ClassCelestial.__index = ClassCelestial
 
+local field         = require("scenario/gravitationalRacing/celestial/gravitationalScalarField")
 local helper        = require("scenario/scenariohelper")
 local factors       = require("scenario/gravitationalRacing/dataValues/factors")
 local ClassText     = require("scenario/gravitationalRacing/classes/classText")
 local ClassPath     = require("scenario/gravitationalRacing/classes/classPath")
-local ClassVector   = require("scenario/gravitationalRacing/classes/classVector")
---local ClassMatrix   = require("scenario/gravitationalRacing/classes/classMatrix")
 local tableComp     = require("scenario/gravitationalRacing/utils/tableComprehension")
-local field         = require("scenario/gravitationalRacing/celestial/gravitationalScalarField")
+local ClassVector   = require("scenario/gravitationalRacing/classes/classVector")
 local celestialInfo = require("scenario/gravitationalRacing/dataValues/celestialInformation")
 
 local unpack = unpack or table.unpack
 
---Class methods
+--Static methods
 local function getGravitationalConstant()
   --[[
-  Returns the value of G
+  Returns:
+    <number> - the value of G
   ]]--
   return 6.67408*math.pow(10, -11)
 end
@@ -30,7 +30,10 @@ local function setDangerRadiiValues(newValues)
   Sets the danger radii values
   Note: this function WILL automatically update celestials, since they use these
   numbers to update their danger radii every update
+  Parameters:
+    newValues - the new values to use
   ]]--
+  --Redefine the function
   getDangerRadiiValues = function()
     return {newValues[1], newValues[2], newValues[3]}
   end
@@ -45,7 +48,7 @@ end
 
 local function getEjectionJetHeight()
   --[[
-  Returns the height (only counts top/bottom part ie. half) of the ejectin jets in-game, per scale
+  Returns the height (only counts top/bottom part ie. half) of the ejection jets in-game, per scale
   ]]--
   return 0.3
 end
@@ -100,6 +103,8 @@ local function getCelestialTypeFromModel(model)
 
   log("I", "gr:getCelestialTypeFromModel()", "Model="..model.." is not recognised")
 end
+
+-------------------------------------------------------------------------------------------------------------------
 
 function ClassCelestial:calculateMass(radius, actualRadius, actualMass)
   --[[

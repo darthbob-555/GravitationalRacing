@@ -1,15 +1,14 @@
 local helper             = require("scenario/scenariohelper")
 local factors            = require("scenario/gravitationalRacing/dataValues/factors")
 local ClassVector        = require("scenario/gravitationalRacing/classes/classVector")
+local errorHandler       = require("scenario/gravitationalRacing/utils/errorHandler")
 local checkpointsHandler = require("scenario/gravitationalRacing/scenario/track/checkpointsHandler")
 
 ClassVehicle = {}
 ClassVehicle.__index = ClassVehicle
 
 function ClassVehicle:new(name, position)
-  if not name or not position then
-    error("One or more parameters are nil")
-  end
+  errorHandler.assertNil(name, position)
 
   local self = {}
   setmetatable(self, ClassVehicle)
@@ -64,14 +63,17 @@ function ClassVehicle:isImmune()
 end
 
 function ClassVehicle:setInitialPosition(initPos)
+  errorHandler.assertNil(initPos)
   self.initialPosition = initPos
 end
 
 function ClassVehicle:setFreeroamReset(freeroam)
+  errorHandler.assertNil(freeroam)
   self.freeroamReset = freeroam
 end
 
 function ClassVehicle:setMaxAccel(accel)
+  errorHandler.assertNil(accel)
   self.maxAccel = accel
 end
 
@@ -101,6 +103,8 @@ end
 function ClassVehicle:applyAccel(dt)
   --[[
   Applies wind to the vehicle
+  Parameters:
+    dt - the time since the last frame
   ]]--
   --Only validate for calculated values, not specified ones
   if not self.isBoosting then
@@ -136,23 +140,27 @@ end
 function ClassVehicle:addAcceleration(accel, time)
   --[[
   Adds an amount of acceleration for a period of time to the vehicle
+  Parameters:
+    accel - the wind vector to add
+    time  - the duration to apply the acceleration for
   ]]--
+  errorHandler.assertNil(accel, time)
   table.insert(self.forcedAccel, {a = accel, t = time})
 end
 
 function ClassVehicle:addWind(force)
   --[[
-  Adds another amount of wind to the vehicles acceleration
+  Adds an amount of wind to the vehicles acceleration
+  Parameters:
+    force - the force being applied to this vehicle
   ]]--
-  if not force then
-    log("E", "Solar System: addWind()", "Cannot apply a nil force, ignoring...")
-    return
-  end
+  errorHandler.assertNil(force)
 
   --While boosting, no celestial affects the vehicle. This is because the acceleration
   --via a trigger ticks slower than the update time, which causes the boost to be
   --null and voided
-  if not self.isBoosting then
+  if not self.isBoosting and not self.immune then
+    --Some arbitrary scale factor
     local a = force:multiply(50000)
     a = a:divide(factors.getDistanceScaleFactor())
 
@@ -163,6 +171,8 @@ end
 function ClassVehicle:update(dt)
   --[[
   Updates the vehicle by applying wind
+  Parameters:
+    dt - the time since the last frame
   ]]--
   local vehObj = self.obj
   --Wait for the vehicle to spawn
@@ -196,6 +206,9 @@ function ClassVehicle:update(dt)
           --Fix vehicle and reset its physics
           vehObj:requestReset(RESET_PHYSICS)
           vehObj:resetBrokenFlexMesh()
+
+          self.acceleration = ClassVector.new(0,0,0)
+          self:applyAccel(dt)
         else
           checkpointsHandler.resetToCheckpoint(self)
         end
@@ -212,6 +225,12 @@ function ClassVehicle:update(dt)
 end
 
 function ClassVehicle:placeVehicle(pos)
+  --[[
+  Places the vehicle at a new location
+  Parameters:
+    pos - the new position
+  ]]--
+  errorHandler.assertNil(pos)
   TorqueScript.eval(self.name..'.position = "'..pos:getX()..' '..pos:getY()..' '..pos:getZ()..'";')
 end
 
@@ -229,6 +248,11 @@ end
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(name, position)
+  --[[
+  Attributes:
+    name     - the vehicle name
+    position - the starting position
+  ]]--
   return ClassVehicle:new(name, position)
 end
 

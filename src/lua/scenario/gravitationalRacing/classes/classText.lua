@@ -1,8 +1,16 @@
-local ClassVector = require("scenario/gravitationalRacing/classes/classVector")
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
 
 local function createText(input, objectName, position, scale, spacing)
   --[[
   Creates the input text into the world and returns the table
+  Parameters:
+    input      - the input string
+    objectName - the name of the text object
+    position   - the position to start the text at
+    scale      - the scale of each character
+    spacing    - the distance between two characters
+  Returns:
+    characters - a list of characters and their respective X values, relative to the origin
   ]]--
   local characters = {}
   local x = position:getX()
@@ -50,6 +58,8 @@ ClassText = {}
 ClassText.__index = ClassText
 
 function ClassText:new(name, position, scale)
+  errorHandler.assertNil(name, position)
+
   local self = {}
   setmetatable(self, ClassText)
   self.position = position
@@ -64,9 +74,14 @@ end
 function ClassText:move(newPosition)
   --[[
   Moves the text to a new location
+  Parameters:
+    newPosition - the new position of the text
   ]]--
+  errorHandler.assertNil(newPosition)
+
   local x = newPosition:getX()
-  for i, data in ipairs(self.charTable) do
+  --Move each character
+  for i, _ in ipairs(self.charTable) do
     TorqueScript.eval('text_'..self.objectName..'_'..i..'.position = "'..x..' '..newPosition:getY()..' '..newPosition:getZ()..'";')
     x = x + 0.0175*self.scale + self.spacing
   end
@@ -77,7 +92,12 @@ end
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(name, position, scale)
-  --TODO use ClassPoint instead of ClassVector for position
+  --[[
+  Attributes:
+    name     - the base name of the text object
+    position - the initial starting point fo thr first character
+    scale    - the scale of each character
+  ]]--
   return ClassText:new(name, position, scale)
 end
 

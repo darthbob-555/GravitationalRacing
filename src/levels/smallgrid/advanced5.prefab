@@ -451,48 +451,6 @@ $ThisPrefab = new SimGroup() {
       canSaveDynamicFields = "1";
          objectType = "static";
    };
-   new TSStatic(checkpoint4) {
-      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
-      dynamic = "0";
-      playAmbient = "1";
-      meshCulling = "0";
-      originSort = "0";
-      useInstanceRenderData = "0";
-      instanceColor = "White";
-      collisionType = "Collision Mesh";
-      decalType = "Collision Mesh";
-      prebuildCollisionData = "0";
-      renderNormals = "0";
-      forceDetail = "-1";
-      position = "573.205017 -2251.17993 419.686005";
-      scale = "1.5 3 1.5";
-      rotationMatrix = "5.96046448e-08 0.99999994 0 -0.99999994 5.96046448e-08 0 0 0 1";
-      isRenderEnabled = "false";
-      canSave = "1";
-      canSaveDynamicFields = "1";
-         direction = "N";
-   };
-   new TSStatic(checkpoint5) {
-      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
-      dynamic = "0";
-      playAmbient = "1";
-      meshCulling = "0";
-      originSort = "0";
-      useInstanceRenderData = "0";
-      instanceColor = "White";
-      collisionType = "Collision Mesh";
-      decalType = "Collision Mesh";
-      prebuildCollisionData = "0";
-      renderNormals = "0";
-      forceDetail = "-1";
-      position = "502.178314 -2666.77686 402.549683";
-      scale = "3 6 3";
-      rotationMatrix = "1 0 0 0 0.999999762 -0.000690534245 0 0.000690534245 0.999999762";
-      isRenderEnabled = "false";
-      canSave = "1";
-      canSaveDynamicFields = "1";
-         direction = "E";
-   };
    new TSStatic(star_5) {
       shapeName = "levels/smallgrid/art/gravitationalRacing/celestialbodies/sun.dae";
       dynamic = "1";
@@ -606,9 +564,9 @@ $ThisPrefab = new SimGroup() {
       renderDistance = "500";
       renderFade = "0.100000001";
       datablock = "default_vehicle";
-      position = "313.50177 -2688.75073 401.130096";
+      position = "313.50174 -2688.74658 401.116455";
       scale = "1 1 1";
-      rotationMatrix = "-1 0 0 0 -1 0 0 0 1";
+      rotationMatrix = "-0.999999762 0 0 0 -0.999999762 0 0 0 1";
       canSave = "1";
       canSaveDynamicFields = "1";
          licenseFormats = "[\"52-11\"]";
@@ -654,50 +612,6 @@ $ThisPrefab = new SimGroup() {
       canSave = "1";
       canSaveDynamicFields = "1";
    };
-   new TSStatic(checkpoint3) {
-      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/next.dae";
-      dynamic = "0";
-      playAmbient = "1";
-      meshCulling = "0";
-      originSort = "0";
-      useInstanceRenderData = "0";
-      instanceColor = "White";
-      collisionType = "Collision Mesh";
-      decalType = "Collision Mesh";
-      prebuildCollisionData = "0";
-      renderNormals = "0";
-      forceDetail = "-1";
-      position = "329.266052 -2402.7229 419.031494";
-      scale = "1.5 3 1.5";
-      rotationMatrix = "1 0 0 0 0.999999762 -0.000690534245 0 0.000690534245 0.999999762";
-      isRenderEnabled = "false";
-      canSave = "1";
-      canSaveDynamicFields = "1";
-         direction = "W";
-         pathID = "2";
-   };
-   new TSStatic(checkpoint1) {
-      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/next.dae";
-      dynamic = "0";
-      playAmbient = "1";
-      meshCulling = "0";
-      originSort = "0";
-      useInstanceRenderData = "0";
-      instanceColor = "White";
-      collisionType = "Collision Mesh";
-      decalType = "Collision Mesh";
-      prebuildCollisionData = "0";
-      renderNormals = "0";
-      forceDetail = "-1";
-      position = "268.653992 -2400.61011 401.136993";
-      scale = "1.5 3 1.5";
-      rotationMatrix = "1 0 0 0 0.999999762 -0.000690534245 0 0.000690534245 0.999999762";
-      isRenderEnabled = "false";
-      canSave = "1";
-      canSaveDynamicFields = "1";
-         direction = "W";
-         pathID = "1";
-   };
    new TSStatic(checkpoint2) {
       shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
       dynamic = "0";
@@ -720,8 +634,96 @@ $ThisPrefab = new SimGroup() {
          direction = "E";
          pathID = "1";
    };
+   new TSStatic(checkpoint4) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
+      dynamic = "0";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "573.205017 -2251.17993 419.686005";
+      scale = "1.5 3 1.5";
+      rotationMatrix = "5.96046448e-08 0.99999994 0 -0.99999994 5.96046448e-08 0 0 0 1";
+      isRenderEnabled = "false";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         direction = "N";
+   };
+   new TSStatic(checkpoint1) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/next.dae";
+      dynamic = "0";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "268.653992 -2400.61011 401.136993";
+      scale = "1.5 3 1.5";
+      rotationMatrix = "-1 8.74227766e-08 0 -8.74227766e-08 -1 0 0 0 1";
+      isRenderEnabled = "false";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         direction = "W";
+         pathID = "1";
+   };
+   new TSStatic(checkpoint3) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/next.dae";
+      dynamic = "0";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "329.266052 -2402.7229 419.031494";
+      scale = "1.5 3 1.5";
+      rotationMatrix = "-1 8.74227766e-08 0 -8.74227766e-08 -1 0 0 0 1";
+      isRenderEnabled = "false";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         direction = "W";
+         pathID = "2";
+   };
+   new TSStatic(checkpoint5) {
+      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
+      dynamic = "0";
+      playAmbient = "1";
+      meshCulling = "0";
+      originSort = "0";
+      useInstanceRenderData = "0";
+      instanceColor = "White";
+      collisionType = "Collision Mesh";
+      decalType = "Collision Mesh";
+      prebuildCollisionData = "0";
+      renderNormals = "0";
+      forceDetail = "-1";
+      position = "502.178314 -2666.77686 401.501373";
+      scale = "3 6 3";
+      rotationMatrix = "1 0 0 0 1 0 0 0 1";
+      isRenderEnabled = "false";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+         direction = "E";
+   };
 };
 //--- OBJECT WRITE END ---
+
+
 
 
 

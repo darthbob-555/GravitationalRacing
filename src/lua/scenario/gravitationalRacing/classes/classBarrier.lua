@@ -1,10 +1,15 @@
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
+
 ClassBarrier = {}
 ClassBarrier.__index = ClassBarrier
 
 function ClassBarrier:new(id, position)
+  errorHandler.assertNil(id, position)
+
   local self = {}
   self.id = id
-  self.position = position:clone() --Since position is used twice, prevent mutabilty screwing things up
+  --Since position is used twice, prevent mutability screwing things up
+  self.position = position:clone()
   self.initialPosition = position
 
   setmetatable(self, ClassBarrier)
@@ -25,8 +30,11 @@ end
 
 function ClassBarrier:animateClosing(dt)
   --[[
-  Animates the opening by moving tyhe barrier downwards
-  Returns true when it is finished
+  Animates the opening by moving the barrier downwards
+  Parameters:
+    dt - the time since last frame
+  Returns
+    <boolean> - whether the animation is finished
   ]]--
   self.position:setZ(self.position:getZ() + 10*dt)
   TorqueScript.eval('barrier'..self.id..'.position="'..self.position:getX()..' '..self.position:getY()..' '..self.position:getZ()..'";')
@@ -44,7 +52,10 @@ end
 function ClassBarrier:animateOpening(dt)
   --[[
   Animates the opening by moving the barrier downwards
-  Returns true when it is finished
+  Parameters:
+    dt - the time since last frame
+  Returns
+    <boolean> - whether the animation is finished
   ]]--
   self.position:setZ(self.position:getZ() - 10*dt)
   TorqueScript.eval('barrier'..self.id..'.position="'..self.position:getX()..' '..self.position:getY()..' '..self.position:getZ()..'";')
@@ -60,6 +71,11 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(id, position)
+  --[[
+  Attributes:
+    id       - the id (number) of this barrier
+    position - the position of this barrier
+  ]]--
   return ClassBarrier:new(id, position)
 end
 

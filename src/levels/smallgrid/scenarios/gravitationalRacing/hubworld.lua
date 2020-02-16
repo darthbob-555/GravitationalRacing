@@ -6,47 +6,65 @@ local scenarioController     = require("scenario/gravitationalRacing/scenarioCon
 local celestialsHandler      = require("scenario/gravitationalRacing/celestial/celestialsHandler")
 local ClassVehicle           = require("scenario/gravitationalRacing/classes/classVehicle")
 local ClassVector            = require("scenario/gravitationalRacing/classes/classVector")
+local errorHandler           = require("scenario/gravitationalRacing/utils/errorHandler")
 
-local saveFileData = nil
-local triggersGroup = nil
+local saveFileData
+local triggersGroup
+
 local setup = false
 local loadingScenario = false
 
 local sourceFiles = {}
-
 local vehicles = {player = nil}
-
 local display = {displaying = false, scenario = ""}
 
-local function highlightScenario(show, triggerName, pos, difficultyColour)
+local function highlightScenario(show, triggerName, pos, colour)
   --[[
   Shows a waypoint over the scenario
+  Parameters:
+    show        - whether or not to show the waypoint
+    triggerName - the name of the trigger this waypoint is for
+    pos         - the position of the waypoint
+    colour      - the colour of the waypoint
   ]]--
-  if not scenetree.findObject(triggerName.."_waypoint") and show then
+  errorHandler.assertNil(triggerName)
+
+  local waypointName = triggerName.."_waypoint"
+
+  --Don't overwrite
+  if not scenetree.findObject(waypointName) and show then
+    --Specific parameters for waypoint creation
+    errorHandler.assertNil(pos, colour)
+
     TorqueScript.eval([[
-    new TSStatic(]]..triggerName..[[_waypoint){
+    new TSStatic(]]..waypointName..[[){
       shapeName = "art/shapes/interface/checkpoint_marker.dae";
       position = "]]..pos.x..[[ ]]..pos.y..[[ ]]..pos.z..[[";
       scale = "20 20 150";
-      instanceColor = "]]..difficultyColour..[[";
+      instanceColor = "]]..colour..[[";
     };
     ]])
   else
-    if show then
-      TorqueScript.eval(triggerName..'_waypoint.hidden = "0";')
-    else
-      TorqueScript.eval(triggerName..'_waypoint.hidden = "1";')
-    end
+    local visibility = not show and 1 or 0
+    TorqueScript.eval(waypointName..'.hidden = "'..visibility..'";')
   end
 end
 
 local function lockScenario(triggerName, pos)
   --[[
-  Positions a barrier to the scenario to prevent entering
+  Positions a barrier to a scenario to prevent entering
+  Parameters:
+    triggerName - the name of the trigger this shield is for
+    pos         - the position of the waypoint
   ]]--
-  if not scenetree.findObject(triggerName.."_shield") then
+  errorHandler.assertNil(triggerName, pos)
+
+  local shieldName = triggerName.."_shield"
+
+  --Don't overwrite
+  if not scenetree.findObject(shieldName) then
     TorqueScript.eval([[
-    new TSStatic(]]..triggerName..[[_shield) {
+    new TSStatic(]]..shieldName..[[) {
       shapeName = "levels/smallgrid/art/gravitationalRacing/hubWorld/scenario_shield.dae";
       position = "]]..pos.x..[[ ]]..pos.y..[[ ]]..(pos.z-3)..[[";
       scale = "12 12 12";
@@ -58,51 +76,77 @@ local function lockScenario(triggerName, pos)
 end
 
 local function stringToTrigger(string)
+  --[[
+  Formats a string to a trigger name by forcing lower case and replacing spaces with underscores
+  Parameters:
+    string - the string to convert
+  Returns:
+    <string> - the converted string
+  ]]--
+  errorHandler.assertNil(string)
   return string:lower():gsub(" ", "_")
 end
 
 local function scenarioNameToTrigger(scName)
   --[[
   Converts a formatted scenario name to its trigger name
+  Parameters:
+    scName - the formatted scenario name
+  Returns:
+    <string> - the trigger name
   ]]--
+  errorHandler.assertNil(scName)
   return stringToTrigger("sc_"..scName)
 end
 
 local function championshipNameToTrigger(chName)
   --[[
-  Converts a formatted scenario name to its trigger name
+  Converts a formatted championship name to its trigger name
+  Parameters:
+    chName - the formatted championship name
+  Returns:
+    <string> - the trigger name
   ]]--
+  errorHandler.assertNil(chName)
   return stringToTrigger("ch_"..chName)
 end
 
 local function triggerNameFormatted(trigName)
   --[[
   Converts a trigger name to a formatted scenario/championship name
+  Parameters:
+    trigName - the name of the trigger to convert
+  Returns:
+    convertedName - the converted name
   ]]--
+  errorHandler.assertNil(trigName)
   --Remove prefix
   trigName = trigName:gsub("sc_", ""):gsub("ch_", "")
   --Capitalise 1st letter
   trigName = trigName:sub(1, 1):upper()..trigName:sub(2, #trigName)
 
-  local scName, i = "", 1
+  local convertedName = ""
+  local i = 1
 
   while i <= #trigName do
     local char = trigName:sub(i, i)
+
     if char == "_" then
+      --First character cannot start with a blank space
       char = i == 1 and "" or " "
 
       i = i+1
       --Add in a blank or empty space and capitalise the next char
-      scName = scName..char..trigName:sub(i, i):upper()
+      convertedName = convertedName ..char..trigName:sub(i, i):upper()
     else
       --Add in next char
-      scName = scName..char
+      convertedName = convertedName ..char
     end
 
     i = i+1
   end
 
-  return scName
+  return convertedName
 end
 
 local function setupScenarios()
@@ -212,8 +256,18 @@ end
 local function uiRequest(request, params)
   --[[
   Handles a request from a UI, and also sends a response
+  Parameters:
+    request - the action to perform
+    parsms  - the data to use
+  Returns:
+    <table> - a response of the action (this is action specific)
+              will return an empty table if request is not recognised
   ]]--
+  errorHandler.assertNil(request)
+
   if request == "Highlight Scenario" then
+    errorHandler.assertNil(params.scenario)
+
     local scenarioName = params.scenario
     local triggerName = scenarioNameToTrigger(scenarioName)
 
@@ -223,9 +277,11 @@ local function uiRequest(request, params)
     local _, difficulty = scenarioDetailsHandler.getScenarioDetails(sourceFiles[triggerName:gsub("sc_", "")])
     highlightScenario(show, triggerName, scenetree.findObject(triggerName):getPosition(), scenarioDetailsHandler.difficultyToColourRGBA(difficulty) )
 
+    --Return the waypoint state
     return {show}
   else
     log("E", "uiRequest(): Unknown request! [request="..(request or "nil"))
+    return {}
   end
 end
 
@@ -240,6 +296,23 @@ local function setupSourceFiles()
   end
 end
 
+local function isValidChampionship(championshipName)
+  --[[
+  Checks whether a championship is valid ie. defined
+  Parameters:
+    champName - the championship to check
+  Returns:
+    <boolean> - whether it is valid
+  ]]--
+  for _, champName in ipairs(jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/championshipConfigs.json"))) do
+    if championshipName == champName then
+      return true
+    end
+  end
+
+  return false
+end
+
 --------------------------------------------------------------------------------------------------------------------
 --Teleport Functions------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
@@ -249,26 +322,33 @@ local teleportData = {destination = "", championship = "", angle = 0, starting =
 local function teleportToScenario(scenario, championship)
   --[[
   Loads the specified scenario
+  Parameters:
+    scenario     - the scenario to load
+    championship - the championship the scenario is a part of (nil for single scenarios)
   ]]--
-  if not scenario then
-    log("E", "gravitationalRacing: teleportToScenario()", "Cannot load up a nil scenario, ignoring...")
-    return
-  end
+  errorHandler.assertNil(scenario)
 
   if championship and championship ~= "" then
+    errorHandler.assetTrue(isValidChampionship(championship), championship.." is not a known championship")
+
     fileHandler.saveToFile("championship", {champName = championship, champData = {current = championship, engaged = true}}, false)
   end
 
   local filePath = sourceFiles[scenario]
 
   scenario_scenariosLoader.start(scenario_scenariosLoader.loadScenario(filePath, nil, filePath))
+  --Set to prevent continual loading of this scenario
   loadingScenario = true
 end
 
 local function beginTeleport(dt)
   --[[
   Begins the teleport
+  Parameters:
+    dt - the time since last frame
   ]]--
+  errorHandler.assertNil(dt)
+
   local rgba = teleportData.rgba
   rgba.a = 1 - teleportData.time/3
 
@@ -535,7 +615,7 @@ local function onScenarioChange(sc)
     setupSideInfo()
 
     --Hide the floor
-    local ground = scenetree.findClassObjects('Groundplane')
+    local ground = scenetree.findClassObjects("Groundplane")
     for _, name in ipairs(ground) do
       scenetree.findObject(name).hidden = true
     end

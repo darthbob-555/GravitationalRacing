@@ -16,6 +16,6 @@ local function onScenarioChange(sc)
   end
 end
 
--- M.onScenarioChange = onScenarioChange
+M.onScenarioChange = onScenarioChange
 M.onBeamNGTrigger = onBeamNGTrigger
 return M

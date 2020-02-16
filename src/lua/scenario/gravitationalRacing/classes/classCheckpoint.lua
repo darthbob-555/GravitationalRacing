@@ -1,6 +1,10 @@
 local function convertDirToRot(checkpointInstance)
   --[[
   Converts a direction to a rotation for the player vehicle
+  Parameters:
+    checkpointInstance - the instance of the checkpoint
+  Returns:
+    <table> - the rotation from the direction
   ]]--
   local dir = checkpointInstance:getDirection()
   if dir then
@@ -16,15 +20,15 @@ local function convertDirToRot(checkpointInstance)
 end
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------
-local ClassVector = require("scenario/gravitationalRacing/classes/classVector")
+local ClassVector  = require("scenario/gravitationalRacing/classes/classVector")
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
 
 ClassCheckpoint = {}
 ClassCheckpoint.__index = ClassCheckpoint
 
 function ClassCheckpoint:new(position, rotation, scale, direction, number, state, isEndingCheckpoint, splitID)
-  if not position or not scale or not number or not state then
-    error("One or more parameters is nil! [position="..tostring(position and position:toString() or nil)..", scale="..tostring(scale or "nil")..", direction="..tostring(direction or "nil")..", number="..tostring(number or "nil")..", state="..tostring(state or "nil").."]")
-  end
+  errorHandler.assertNil(position, scale, number, state)
+  errorHandler.assertValidElement(state, {"next", "active", "inactive", "split"}, state.." is not a known state entered for checkpoint")
 
   local self = {}
   self.position = ClassVector.new(position.x, position.y, position.z)
@@ -44,10 +48,11 @@ end
 
 function ClassCheckpoint:getTriggerRadius()
   --[[
-  Returns the radius at which the checkpoint will be classed as reached
-  ]]
+  Returns:
+    <number> - the radius at which the checkpoint will be classed as reached
+  ]]--
   if self.isEndingCheckpoint then
-    --Ending checkpoints are a little bit more leniant
+    --Ending checkpoints are a little bit more lenient
     return 20 * self.scale.x
   else
     --14 is the radius of the inner torus at scale x = 1
@@ -66,16 +71,17 @@ function ClassCheckpoint:isEndCheckpoint()         return self.isEndingCheckpoin
 function ClassCheckpoint:isAlternativeCheckpoint() return self.isSplitCheckpoint  end
 
 function ClassCheckpoint:setEndCheckpoint(value)
+  errorHandler.assertNil(value)
   self.isEndingCheckpoint = value
 end
 
 function ClassCheckpoint:setState(state)
-  if not (state == "next" or state == "active" or state == "inactive" or state == "split") then
-    error("Incorrect state entered for checkpoint: "..(state and state or "nil"))
-  end
+  errorHandler.assertNil(state)
+  errorHandler.assertValidElement(state, {"next", "active", "inactive", "split"}, state.." is not a known state entered for checkpoint")
 
   --An ending checkpoint cannot be changed from its finish flag texture
   if self.isEndingCheckpoint then
+    log("W", "ClassCheckpoint:setState()", "Cannot change state of an ending checkpoint")
     return
   end
 
@@ -107,6 +113,7 @@ function ClassCheckpoint:updateCheckpointStateInWorld()
     ScenarioObjectsGroup.add(]]..self.name..[[);
   ]])
 
+  --Set pathID attribute in the new object
   if self.isSplitCheckpoint and self.pathID then
     TorqueScript.eval(self.name..'.pathID="'..self.pathID..'";')
   end
@@ -117,6 +124,7 @@ function ClassCheckpoint:trigger()
   Triggers the checkpoint
   ]]--
   self.state = "active"
+  --End checkpoints remain flag-textured
   if not self.isEndingCheckpoint then
     self:updateCheckpointStateInWorld()
   end
@@ -141,6 +149,17 @@ end
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(position, rotation, scale, direction, number, state, isEndingCheckpoint, splitID)
+  --[[
+  Attributes:
+    position           - the position
+    rotation           - the rotation
+    scale              - the scale
+    direction          - the direction (N,E,S,W)
+    number             - the sequence number of this checkpoint in the lap
+    state              - the initial state of the checkpoint
+    isEndingCheckpoint - whether this checkpoint is a start or end checkpoint
+    splitID            - the split-path identifier (nil for non-split checkpoints)
+  ]]--
   return ClassCheckpoint:new(position, rotation, scale, direction, number, state, isEndingCheckpoint, splitID)
 end
 

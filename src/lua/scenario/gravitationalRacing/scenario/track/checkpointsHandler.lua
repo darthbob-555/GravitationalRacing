@@ -1,11 +1,12 @@
 local M = {}
 
-local ClassCheckpoint    = require("scenario/gravitationalRacing/classes/classCheckpoint")
 local tableComp          = require("scenario/gravitationalRacing/utils/tableComprehension")
-local shortcutHandler    = require("scenario/gravitationalRacing/scenario/track/shortcutHandler")
-local scenarioEndHandler = require("scenario/gravitationalRacing/scenario/scenarioEndHandler")
 local fileHandler        = require("scenario/gravitationalRacing/utils/fileHandler")
+local errorHandler       = require("scenario/gravitationalRacing/utils/errorHandler")
+local ClassCheckpoint    = require("scenario/gravitationalRacing/classes/classCheckpoint")
+local shortcutHandler    = require("scenario/gravitationalRacing/scenario/track/shortcutHandler")
 local scenarioDetails    = require("scenario/gravitationalRacing/scenario/scenarioDetails")
+local scenarioEndHandler = require("scenario/gravitationalRacing/scenario/scenarioEndHandler")
 
 local checkpoints, checkpointConfig = {}, {}
 --i = section/non-split-route cp, j = specific split-route, k = split-route cp
@@ -17,7 +18,6 @@ local currentLap, totalLaps = 0, 0
 local finished = false
 
 local currentCheckpointNum, totalCheckpointNum = 0, 0
-
 local nextCheckpointInstances = {}
 
 local resets = 0
@@ -41,46 +41,58 @@ local function completeLap()
   end
 end
 
-local function getLastCheckpoint()
+local function getCheckpointFromTable(indexes)
   --[[
-  Returns the last checkpoint the player passed
+  Gets the last checkpoint triggered, given the indexes
+  Parameters:
+    indexes - the list of indexes to use
+  Returns:
+    <string> - the checkpoint
   ]]--
+  errorHandler.assertNil(indexes)
+
   --The index will be out of bounds if the player has not reached a checkpoint
-  if lastIndexes.i == 0 then
+  if indexes.i == 0 then
     return "checkpoint0"
   else
-    if lastIndexes.j and lastIndexes.k then
-      return checkpointConfig[lastIndexes.i][lastIndexes.j][lastIndexes.k]
+    errorHandler.assertTrue(indexes.i > 0, "Index must be greater than 0")
+
+    if indexes.j and indexes.k then
+      errorHandler.assertTrue(indexes.j > 0 and indexes.k > 0, "Indexes must be greater than 0")
+      errorHandler.assertNil(indexes.j, indexes.k)
+      return checkpointConfig[indexes.i][indexes.j][indexes.k]
     else
-      return checkpointConfig[lastIndexes.i]
+      return checkpointConfig[indexes.i]
     end
   end
+end
+
+local function getLastCheckpoint()
+  --[[
+  Returns:
+    <string> - the last checkpoint the player passed
+  ]]--
+  return getCheckpointFromTable(lastIndexes)
 end
 
 local function getCurrentCheckpoint()
   --[[
-  Returns the name of the current checkpoint
+  Returns:
+    string - the name of the current checkpoint
   ]]--
-  --The index will be out of bounds if the player has not reached a checkpoint
-  if currentIndexes.i == 0 then
-    return "checkpoint0"
-  else
-    if currentIndexes.j and currentIndexes.k then
-      return checkpointConfig[currentIndexes.i][currentIndexes.j][currentIndexes.k]
-    else
-      return checkpointConfig[currentIndexes.i]
-    end
-  end
+  return getCheckpointFromTable(currentIndexes)
 end
 
 local function getNextSection()
   --[[
-  Returns then next section (either single checkpoint or split-route)
+  Returns:
+    <string> - the next section (either single checkpoint or split-route)
   ]]--
   if currentIndexes.j and currentIndexes.k then
-    --Return the next split-route checkpoint. If there is not one, return the next none split-route checkpoint
-    return checkpointConfig[currentIndexes.i  ][currentIndexes.j][currentIndexes.k+1]
-       and checkpointConfig[currentIndexes.i  ][currentIndexes.j][currentIndexes.k+1]
+    local splitRoute = checkpointConfig[currentIndexes.i  ][currentIndexes.j][currentIndexes.k+1]
+    --Return the next split-route checkpoint. If there is not one, return the next non split-route checkpoint
+    return splitRoute
+       and splitRoute
         or checkpointConfig[currentIndexes.i+1]
   else
     return checkpointConfig[currentIndexes.i+1]
@@ -90,7 +102,12 @@ end
 local function changeState(cpName, state)
   --[[
   Changes the state of a checkpoint, given a name and a state
+  Parameters:
+    cpName - the name of the checkpoint
+    state  - the state to change to
   ]]--
+  errorHandler.assertNil(cpName, state)
+
   local instance = checkpoints[cpName]
   --Change the next checkpoint, if it is not the end
   if not instance:isEndCheckpoint() then
@@ -101,8 +118,13 @@ end
 local function triggerCheckpoint(checkpointNum)
   --[[
   Triggers a checkpoint
+  Parameters:
+    checkpointNum - the checkpoint number in the lap/route
   ]]--
+  errorHandler.assertNil(checkpointNum)
+
   local cpName = "checkpoint"..checkpointNum
+  errorHandler.assertTrue(scenetree.findObject(cpName) ~= nil, cpName.." is not a checkpoint in this scenario")
 
   local toChangeState = {}
 
@@ -194,7 +216,11 @@ local function resetToCheckpoint(vehicle)
   --[[
   Resets the player back to the last checkpoint passed
   If the player has not reached the first checkpoint, it resets them to the start
+  Parameters:
+    vehicle - the vehicle obj to reset
   ]]--
+  errorHandler.assertNil(vehicle)
+
   resets = resets + 1
 
   local checkpoint = getCurrentCheckpoint()
@@ -224,6 +250,8 @@ local function setupCheckpointConfig()
     otherwise it will not setup properly
     ie. cp12, cp13 should have pathIDs 1, 2 respectively
     -Also, split routes cannot end the scenario (only one finish checkpoint)
+  Returns:
+    cpConfig - the checkpoint configuration for the scenario
   ]]--
   local cpConfig = {}
 
@@ -232,8 +260,6 @@ local function setupCheckpointConfig()
   for i = 1, tableComp.lengthOfTable(checkpoints)-1 do
     local instance = checkpoints["checkpoint"..i]
     local name = checkpoints["checkpoint"..i]:getName()
-
-    --TODO get one lap and multiply
 
     if instance:isAlternativeCheckpoint() then
       local splitId = instance:getPathID()
@@ -267,19 +293,25 @@ local function setupCheckpointConfig()
     cpConfig = tableComp.repeatTable(cpConfig, totalLaps)
   end
 
-  printCps = function(cps)
+  cpsToString = function(cps)
     --[[
-    Prints the checkpoints found, handling split routes
+    Stringifies the checkpoints found, handling split routes
     This function is defined recursively
+    Parameters:
+      cps - the checkpoints found
+    Returns:
+      <string> - the string representation of the checkpoints
     ]]--
+    errorHandler.assertNil(cps)
+
     if type(cps) == "table" then
       local route = ""
       for i, v in ipairs(cps) do
         if i == 1 then
-          if type(v) == "table" then route = printCps(v)
+          if type(v) == "table" then route = cpsToString(v)
           else route = v
           end
-        else route = route..", "..printCps(v)
+        else route = route..", ".. cpsToString(v)
         end
       end
 
@@ -292,12 +324,12 @@ local function setupCheckpointConfig()
   local sCpConfig = ""
   for i, cps in ipairs(cpConfig) do
     if i == 1 then
-      sCpConfig = printCps(cps)
+      sCpConfig = cpsToString(cps)
     else
-      sCpConfig = sCpConfig..", "..printCps(cps)
+      sCpConfig = sCpConfig..", ".. cpsToString(cps)
     end
   end
-  print("Checkpoint config: ["..sCpConfig.."]")
+  --print("Checkpoint config: ["..sCpConfig.."]")
 
   return cpConfig
 end
@@ -305,6 +337,8 @@ end
 local function findCheckpoints()
   --[[
   Finds all checkpoints in the scenario
+  Returns:
+    cps - the checkpoints found and their corresponding data
   ]]--
   local cps = {}
 
@@ -362,7 +396,12 @@ end
 local function createCheckpoints(fullReset, srcFile)
   --[[
   Finds, creates and sets up checkpoints
+  Parameters:
+    fullReset - whether thi sis a full reset of the scenario
+    srcFile   - the scenario file directory
   ]]--
+  errorHandler.assertNil(srcFile)
+
   currentIndexes = {i = 0, j = nil, k = nil}
   currentCheckpointNum = 0
   currentLap = 0
@@ -409,7 +448,13 @@ end
 local function update(running, vehicle, dt)
   --[[
   Checks to see if the player has activated the next checkpoint and update the shortcut handler
+  Parameters:
+    running - whether the scenario is running
+    vehicle - the vehicle instance to use for triggering checkpoints
+    dt      - the time since the last frame
   ]]--
+  errorHandler.assertNil(vehicle, dt)
+
   if finished then return end
 
   local currentCheckpoint = getCurrentCheckpoint()
@@ -466,6 +511,7 @@ local function isFinished()
 end
 
 local function setSrcFile(srcFile)
+  errorHandler.assertNil(srcFile)
   sourceFile = srcFile
 end
 
@@ -473,7 +519,7 @@ local function printResults()
   --[[
   A testing function for printing the checkpoints found
   ]]--
-  print("Checkpoints Found:")
+  print("\nCheckpoints Found:\n")
   for _, instance in pairs(checkpoints) do
     local rot = instance:getRotation()
     print(instance:getName()..": [Pos = ("..instance:getPosition():toString().."), Dir = "..(instance:getDirection() or "nil")..", Rot = {"..rot.x..", "..rot.y..", "..rot.z..", "..rot.w.."},  IsEndCheckpoint="..tostring(instance:isEndCheckpoint())..", IsSplitCheckpoint="..tostring(instance:isAlternativeCheckpoint()).."]")

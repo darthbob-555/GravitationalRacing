@@ -1,10 +1,13 @@
 local ClassBarrier = require("scenario/gravitationalRacing/classes/classBarrier")
-local ClassVector = require("scenario/gravitationalRacing/classes/classVector")
+local ClassVector  = require("scenario/gravitationalRacing/classes/classVector")
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
 
 ClassKey = {}
 ClassKey.__index = ClassKey
 
 function ClassKey:new(id, barriers, position, useOnNextLap)
+  errorHandler.assertNil(id, barriers, position)
+
   local self = {}
   self.id = id
   self.position = position
@@ -49,6 +52,7 @@ function ClassKey:getUsageLap()
 end
 
 function ClassKey:setCollectable(canBeCollected)
+  errorHandler.assertNil(canBeCollected)
   self.collectedData.canBeCollected = canBeCollected
 end
 
@@ -73,10 +77,18 @@ function ClassKey:getCollectedOnData()
 end
 
 function ClassKey:getCollectRadius()
+  --[[
+  Returns:
+    number -the distance at which the ke can be collected
+  ]]--
   return 5
 end
 
 function ClassKey:getUnlockRadius()
+  --[[
+  Returns:
+    number - the distance at which the player needs to be to a barrier to use the key
+  ]]--
   return 75
 end
 
@@ -92,7 +104,10 @@ end
 
 function ClassKey:getDistanceFromBarrier(objPos)
   --[[
-  Returns the distance from an object to the (first if more than one) barrier
+  Parameters:
+    objPos - the position of an object
+  Returns:
+    <ClassVector> - the distance from an object to the (first if more than one) barrier
   ]]--
   return objPos:subtract(self.barriers[1]:getPosition()):getMagnitude()
 end
@@ -100,6 +115,9 @@ end
 function ClassKey:collect(checkpoint, lap)
   --[[
   Removes the key and pends moving the controlled barriers
+  Parameters:
+    checkpoint - the checkpoint number the player was at
+    lap        - the lap number the player was at
   ]]--
   Engine.Audio.playOnce("AudioGui", "event:UI_Checkpoint", {volume = 1, pitch = 1, fadeInTime = 0})
 
@@ -129,6 +147,8 @@ end
 function ClassKey:reset(resetBarriers)
   --[[
   Resets the key (and optionally all barriers controlled by this key) to their original positions
+  Parameters:
+    resetBarriers - whether to reset the barriers as well
   ]]--
   TorqueScript.eval('key'..self.id..'.hidden = "false";')
 
@@ -145,7 +165,9 @@ end
 
 function ClassKey:updateTimer(dt)
   --[[
-  Udpates the barriers opening and closing
+  Updates the barriers opening and closing
+  Parameters:
+    dt - the time since last frame
   ]]--
   if self.barrierTimer then
     for _, instance in ipairs(self.barriers) do
@@ -169,6 +191,8 @@ end
 function ClassKey:animate(dt)
   --[[
   Animates the key by rotating and bobbing it
+  Parameters:
+    dt - the time since last frame
   ]]--
   TorqueScript.eval('key'..self.id..'.rotation = "0 0 -1 '..self.angle..'";')
   -- TorqueScript.eval('key'..self.id..'.position = "'..self.position:getX()..' '..self.position:getY()..' '..(self.position:getZ()+self.elevation)..'";')
@@ -180,8 +204,13 @@ end
 
 function ClassKey:update(dt, vehPos, checkpoint, lap)
   --[[
-  Updates the key, suchg as animating
+  Updates the key, such as animating
   If the key is collected, the function effectively does nothing
+  Parameters:
+    dt         - the time since last frame
+    vehPos     - the position of the vehicle to use for determining collection
+    checkpoint - the checkpoint the player is at
+    lap        - the lap the player is at
   ]]--
   if not self.collectedData.collected then
     local distance = vehPos:subtract(self.position):getMagnitude()
@@ -217,6 +246,13 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(id, barriers, position, useOnNextLap)
+  --[[
+  Attributes:
+    id           - the id of the key
+    barriers     - the barriers this key controls
+    position     - the initial position of the key
+    useOnNextLap - whether this key will be used on the next lap and not on the current lap
+  ]]--
   return ClassKey:new(id, barriers, position, useOnNextLap)
 end
 

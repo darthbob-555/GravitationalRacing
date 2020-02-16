@@ -1,17 +1,27 @@
 local M = {}
 
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
+
 local function mergeAppend(a, b, ...)
   --[[
   Merges two or more integer indexed tables into a new table, preventing overwriting
   of the same index
+  Parameters:
+    a   - the first table
+    b   - the second table
+    ... - any additional tables
+  Returns:
+    c - the merged table
   ]]--
-  local tables = {a, b, select(1, ...)}
+  errorHandler.assertNil(a, b)
+
+  local tables = {a, b, ...}
 
   local c = {}
   local index = 1
 
   for _, T in ipairs(tables) do
-    for i, v in ipairs(T) do
+    for _, v in ipairs(T) do
       c[index] = v
       index = index + 1
     end
@@ -22,9 +32,17 @@ end
 
 local function merge(a, b)
   --[[
+  TODO - allow more than two tables
   Merges table b and a into c. If b is nil, then it returns a
   This does not merge in place, so can be used to clone a table
+  Parameters:
+    a - the first table
+    b - the second table
+  Returns:
+    c - the merged table
   ]]--
+  errorHandler.assertNil(a, b)
+
   local c = {}
 
   for k, v in pairs(a or {}) do
@@ -39,6 +57,15 @@ local function merge(a, b)
 end
 
 local function lengthOfTable(T)
+  --[[
+  Gets the length of a table
+  Parameters:
+    T - the table
+  Returns:
+    c - the length of the table
+  ]]--
+  errorHandler.assertNil(T)
+
   local c = 0
   for _, _ in pairs(T) do
     c = c + 1
@@ -51,10 +78,13 @@ local function contains(T, v)
   --[[
   Returns whether a table T contains a value v
   This function is recursively defined
+  Parameters:
+    T - the table
+    v - the value to find
+  Returns:
+    <boolean> - whether T contains v
   ]]--
-  if not v then
-    error("Cannot check for a nil value!")
-  end
+  errorHandler.assertNil(T, v)
 
   for _, value in ipairs(T) do
     if type(value) == "table" then
@@ -73,10 +103,16 @@ end
 
 local function flattenDict(T)
   --[[
-  Flatterns a table T by removing all subtables in T
+  Flattens a table T by removing all sub-tables in T
   This version flattens dictionaries
   This function is recursively defined
+  Parameters:
+    T - the table to flatten
+  Returns:
+    flattenedT - the flattened version of T
   ]]--
+  errorHandler.assertNil(T)
+
   --Base Case
   if type(T) ~= "table" then
     return {T}
@@ -101,8 +137,12 @@ end
 
 local function flattenDictToArr(T)
   --[[
-  Flattens a dictionary T by removing all subtables in T and converting to an array
+  Flattens a dictionary T by removing all sub-tables in T and converting to an array
   This function is recursively defined
+  Parameters:
+    T - the dictionary
+  Returns:
+    flattenedT - the flattened version of T
   ]]--
   --Base Case
   if type(T) ~= "table" then
@@ -111,8 +151,8 @@ local function flattenDictToArr(T)
 
   --General Case
   local flattenedT = {}
-  for k1, element in pairs(T) do
-    for k2, value in pairs(flattenDictToArr(element)) do
+  for _, element in pairs(T) do
+    for _, value in pairs(flattenDictToArr(element)) do
       table.insert(flattenedT, value)
     end
   end
@@ -122,8 +162,12 @@ end
 
 local function flatten(T)
   --[[
-  Flattens a table T by removing all subtables in T whilst maintaining order
+  Flattens a table T by removing all sub-tables in T whilst maintaining order
   This function is recursively defined
+  Parameters:
+    T - the table
+  Returns:
+    flattenedT - the flattened version of T
   ]]--
   --Base Case
   if type(T) ~= "table" then
@@ -146,14 +190,16 @@ local function containsIndex(T, v, indexes)
   --[[
   Returns the index (multiple for sub-tables) for a particular value in a table
   This function is recursively defined
+  Parameters:
+    T       - the table
+    v       - the value
+    indexes - the indexes found thus far ({} for starting call)
+  Returns:
+    <table> - the index(es) to find v in T
   ]]--
-  if not v then
-    error("Cannot check for a nil value!")
-  end
+  errorHandler.assertNil(T, v, indexes)
 
-  if not indexes then
-    indexes = {}
-  end
+  indexes = indexes or {}
 
   for i, value in ipairs(T) do
     if type(value) == "table" then
@@ -174,6 +220,10 @@ end
 local function hasNumericalIndexes(T)
   --[[
   Returns whether a table T is numerically indexed ie. an array
+  Parameters:
+    T - the table
+  Returns:
+    <boolean> - if T is numerically indexed
   ]]--
   for i = 1, lengthOfTable(T) do
     --If there is no key, it cannot be an array
@@ -189,42 +239,49 @@ local function getSmallestValue(T)
   --[[
   Returns the lowest value in a table
   This function is recursively defined
+  Parameters:
+    T - the table
+  Returns:
+    smallest - the smallest value in T
   ]]--
-  if not T then
-    return
-  end
+  errorHandler.assertNil(T)
 
   local smallest = math.huge
+
+  local smallestInSubTable = function(value, smallest)
+    --[[
+    Finds the smallest value in a sub-table (can also be number for base case)
+    Parameters:
+      value    - the value of this element
+      smallest - the current smallest
+    Returns:
+      smallest - the new smallest
+    ]]--
+    errorHandler.assertNil(value, smallest)
+
+    local valType = type(value)
+    if valType == "table" then
+      local smallestInSubTable = getSmallestValue(value)
+      if smallestInSubTable < smallest then
+        smallest = smallestInSubTable
+      end
+    elseif valType == "number" then
+      if value < smallest then
+        smallest = value
+      end
+    end
+
+    return smallest
+  end
 
   --Sort out dictionaries from arrays
   if hasNumericalIndexes(T) then
     for _, value in ipairs(T) do
-      local valType = type(value)
-      if valType == "table" then
-        local smallestInSubTable = getSmallestValue(value)
-        if smallestInSubTable < smallest then
-          smallest = smallestInSubTable
-        end
-      elseif valType == "number" then
-        if value < smallest then
-          smallest = value
-        end
-      end
+      smallest = smallestInSubTable(value, smallest)
     end
   else
     for _, value in pairs(T) do
-      --TODO merge this with above to reduce repeating code
-      local valType = type(value)
-      if valType == "table" then
-        local smallestInSubTable = getSmallestValue(value)
-        if smallestInSubTable < smallest then
-          smallest = smallestInSubTable
-        end
-      elseif valType == "number" then
-        if value < smallest then
-          smallest = value
-        end
-      end
+      smallest = smallestInSubTable(value, smallest)
     end
   end
 
@@ -235,10 +292,13 @@ local function removeKey(T, K)
   --[[
   Removes a key from a nested dictionary
   This function is recursively defined
+  Parameters:
+    T - the table
+    K - the key to remove
+  Returns:
+    T - the adjusted table T
   ]]--
-  if not T or not K then
-    return
-  end
+  errorHandler.assertNil(T, K)
 
   for k, v in pairs(T) do
     if k == K then
@@ -255,7 +315,15 @@ local function repeatTableFrom(T, originalT, n)
   --[[
   A helper function for the function duplicate, which adds the
   contents in originalT to T n times
+  Parameters:
+    T - the current table
+    originalT - the original table
+    n - the number of times to repeat the table
+  Returns:
+    <table> - the repeated table T
   ]]--
+  errorHandler.assertNil(T, originalT, n)
+
   if n == 1 then
     return T
   end
@@ -267,6 +335,11 @@ local function repeatTable(T, n)
   --[[
   Repeats the entries in a table T n times
   Uses a helper function to provide a simpler interface
+  Parameters:
+    T - the table
+    n - the number of times to repeat
+  Parameters:
+    <table> - the repeated table T
   ]]--
   return repeatTableFrom(T, T, n)
 end

@@ -1,10 +1,12 @@
 local M = {}
 local tableComp       = require("scenario/gravitationalRacing/utils/tableComprehension")
+local errorHandler    = require("scenario/gravitationalRacing/utils/errorHandler")
 local scenarioDetails = require("scenario/gravitationalRacing/scenario/scenarioDetails")
 
 local function getDefaultTrackData()
 	--[[
-	Returns the default data for a new track that has not been unlocked
+	Returns:
+	 	<table> - the default data for a new track that has not been unlocked
 	]]--
 	return {
 		unlocked = false,
@@ -24,7 +26,8 @@ end
 
 local function getDefaultStandings()
 	--[[
-	Returns a blank set of standings for all drivers
+	Returns:
+	 	<table> - a blank set of standings for all drivers
 	]]--
 	local drivers = {"player", "nu scorpii", "the legendary bob", "xi tauri", "infinite"}
 	local standings = {}
@@ -37,7 +40,8 @@ end
 
 local function getDefaultChampionshipData()
 	--[[
-	Returns the default data for a new championship that has not been unlocked
+	Returns:
+	 	<table> - the default data for a new championship that has not been unlocked
 	]]--
 	return {
 		unlocked = false,
@@ -53,7 +57,8 @@ end
 
 local function getDefaultChampionshipsData()
 	--[[
-	Returns the default data for the championships
+	Returns:
+		<table> - the default data for the championships
 	]]--
 	local championships = {current = ""}
 	for champName, _ in pairs(jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/championshipConfigs.json"))) do
@@ -97,6 +102,9 @@ local function checkFileExists()
 	--[[
 	Checks to see if it can open the savefile. If it can then also return the file
 	so any function calling this doesn't have to open the file again - efficiency
+	Returns:
+		<boolean> - whether the file exists
+		file      - the file object
 	]]--
 	local file = readFile("gr_savefile")
 	if file then
@@ -109,6 +117,8 @@ end
 local function readWholeFile()
 	--[[
 	Checks the file exists and it up to date, and then reads the file
+	Returns:
+		<table> - contents of the file
 	]]--
 	local fileExists, file = checkFileExists()
 	if not fileExists then
@@ -122,7 +132,11 @@ end
 
 local function readSectionFromFile(section)
 	--[[
-	Returns an entire section of the save file such as scenarios
+	Gets an entire section of the save file such as scenarios
+	Parameters:
+		section - the section of the savefile to read from
+	Returns:
+		<table> - the section of the table from the savefile
 	]]--
 	if section then
 		return readWholeFile()[section] or error("Section = ["..tostring(section).."] does not exist in savefile")
@@ -135,31 +149,32 @@ local function readFromFile(scName, attribute)
 	If the attribute parameter is not given, this functions returns the whole scenario
 	data for that scName
 	Else, returns a specific attribute
+	Parameters:
+		scName    - the name of the scenario
+		attribute - the attribute to read (can be nil)
+	Returns:
+		? - the contents of file that matches the requirements
 
-	TODO work out a "path" like system for nested table keys - sucy as {a = {b = {c = {}}}}
+	TODO work out a "path" like system for nested table keys - such as {a = {b = {c = {}}}}
 	]]--
-	if not scName then
-		error("scName is nil")
-		return
-	end
+	errorHandler.assertNil(scName)
 
 	local fileContents = readWholeFile().scenarios[scName]
 
 	if not attribute then
 		return fileContents
 	else
-		if not fileContents then
-			log("E", "gravitationalRacing:readFromFile()", "No track exists in the savefile called "..tostring(scName))
-			return
-		end
+		local contents = fileContents[attribute]
+		errorHandler.assertNil(contents)
 
-		return fileContents[attribute]
+		return contents
 	end
 end
 
 local function getNumberOfMedals()
 	--[[
-	Returns the numnber of medals + collectables achieved
+	Returns:
+	 	<number> - the number of medals + collectables achieved
 	]]--
 	local contents = readWholeFile().scenarios
 	local numMedals = 0
@@ -188,18 +203,29 @@ local function saveToFile(type, data, forceOverwrite)
 	Saves data to the savefile
 	forceOverwrite is an optional parameter and will force the update on the savefile,
 	irregardless of whether it is better than previous
+	Parameters:
+		type           - the type of data to store
+		data           - the data to store
+		forceOverwrite - whether to overwrite existing data
 	]]--
-	if not (type == "scenario" or type == "lastScenario" or type == "championship") then
-		error("This data cannot be stored to file! [type="..(type and type or "nil").."]")
-	end
+	errorHandler.assertNil(type, data)
+	errorHandler.assertValidElement(type, {"scenario", "lastScenario", "championship"}, type.." is not valid to be saved")
 
 	local betterBool = function(curr, new, best)
 		--[[
 		Returns the best boolean value, with respect to what is considered the
 		best (true or false)
 		Note: if new is nil, returns curr
+		Parameters:
+			curr - the current value
+			new  - the new value (can be nil)
+			best - what is considered better
+		Returns:
+			? - the better value
 		]]--
-		if new == nil then return curr	end
+		errorHandler.assertNil(curr)
+
+		if new == nil then return curr end
 
 		if     curr == best then return curr
 		elseif new  == best then return new
@@ -211,7 +237,14 @@ local function saveToFile(type, data, forceOverwrite)
 	local smallestSetValue = function(curr, new)
 		--[[
 		Returns the smallest (number) set value
+		Parameters:
+			curr - the current value
+			new  - the new value (can be nil)
+		Returns:
+			<number> - the smallest value that is not nil
 		]]--
+		errorHandler.assertNil(curr)
+
 		if     new == nil then return curr
 		elseif curr == -1 then return new
 		end
@@ -219,13 +252,18 @@ local function saveToFile(type, data, forceOverwrite)
 		if     curr > new then return new
 		elseif curr < new then return curr
 		--Both new and curr are the same
-		else             			 return new
+		else             	   return new
 		end
 	end
 
 	local largestSetValue = function(curr, new)
 		--[[
 		Returns the smallest (number) set value
+		Parameters:
+			curr - the current value
+			new  - the new value
+		Returns:
+			<number> - the largest value that is not nil
 		]]--
 		if     new == nil then return curr
 		elseif curr == -1 then return new
@@ -242,68 +280,66 @@ local function saveToFile(type, data, forceOverwrite)
 
 	if type == "scenario" then
 		local scName, scData = data.scenarioName, data.scenarioData
-		if not scName or not scData then
-			error("Invalid save data!")
+		errorHandler.assertNil(scName, scData)
+
+		local newData = {}
+		if scName == "Tutorial" then
+			newData = {
+				unlocked = true,
+				tried = scData.tried or false,
+				completed = scData.completed or false,
+			}
+		elseif scName == "Solar System Simulation" then
+			newData = {
+				unlocked = scData.unlocked or false,
+			}
 		else
-			local newData = {}
-			if scName == "Tutorial" then
+			local resets, unlckd, cmpltd, time, tried, clltbls = scData.resets, scData.unlocked, scData.completed, scData.time, scData.tried, scData.collectables
+			local medals = scData.medals
+
+			--Apply new data, even if the new data is worst than the old
+			if forceOverwrite then
 				newData = {
-					unlocked = true,
-					tried = scData.tried or false,
-					completed = scData.completed or false,
+					resets     = resets or -1,
+					unlocked   = unlckd or false,
+					completed  = cmpltd or false,
+					tried      = tried  or false,
+					time       = time   or "0:00:000",
+					medals     = {
+						time     = medals.time or false,
+						resets   = medals.medals or false
+					}
 				}
-			elseif scName == "Solar System Simulation" then
-				newData = {
-					unlocked = scData.unlocked or false,
-				}
+
+				newData.collectables = {clltbls[1] or false}
 			else
-				local resets, unlckd, cmpltd, time, tried, clltbls = scData.resets, scData.unlocked, scData.completed, scData.time, scData.tried, scData.collectables
-				local medals = scData.medals
+				local currentData = saveFileData.scenarios[scName]
+				--Hub world will not have current data
+				if not currentData then
+					return
+				end
 
-				--Apply new data, even if the new data is worst than the old
-				if forceOverwrite then
-					newData = {
-						resets     = resets or -1,
-						unlocked   = unlckd or false,
-						completed  = cmpltd or false,
-						tried      = tried  or false,
-						time       = time   or "0:00:000",
-						medals     = {
-							time     = medals.time or false,
-							resets   = medals.medals or false
-						}
+				newData = {
+					resets    = smallestSetValue(currentData.resets, resets),
+					unlocked  = betterBool(currentData.unlocked,  unlckd, true),
+					completed = betterBool(currentData.completed, cmpltd, true),
+					tried     = betterBool(currentData.tried,     tried,  true),
+					time      = scenarioDetails.fasterTime(currentData.time, time),
+					medals = {
+						time   = betterBool(currentData.medals.time,   medals and medals.time   or nil, true),
+						resets = betterBool(currentData.medals.resets, medals and medals.resets or nil, true)
 					}
+				}
 
-					newData.collectables = {clltbls[1] or false}
-				else
-					local currentData = saveFileData.scenarios[scName]
-					--Hub world will not have current data
-					if not currentData then
-						return
-					end
-
-					newData = {
-						resets    = smallestSetValue(currentData.resets, resets),
-						unlocked  = betterBool(currentData.unlocked,  unlckd, true),
-						completed = betterBool(currentData.completed, cmpltd, true),
-						tried     = betterBool(currentData.tried,     tried,  true),
-						time      = scenarioDetails.fasterTime(currentData.time, time),
-						medals = {
-							time   = betterBool(currentData.medals.time,   medals and medals.time   or nil, true),
-							resets = betterBool(currentData.medals.resets, medals and medals.resets or nil, true)
-						}
-					}
-
-					--Not necessary anymore?
-					if currentData.collectables then
-						newData.collectables = {}
-						if not clltbls then
-							--No update necessary
-							newData.collectables = currentData.collectables
-						else
-							for i, v in ipairs(clltbls) do
-								newData.collectables[i] = betterBool(currentData.collectables[i], v, true)
-							end
+				--Not necessary anymore?
+				if currentData.collectables then
+					newData.collectables = {}
+					if not clltbls then
+						--No update necessary
+						newData.collectables = currentData.collectables
+					else
+						for i, v in ipairs(clltbls) do
+							newData.collectables[i] = betterBool(currentData.collectables[i], v, true)
 						end
 					end
 				end
@@ -322,13 +358,7 @@ local function saveToFile(type, data, forceOverwrite)
 						end
 					end
 
-
-					--Key not found
-					if not found then
-						log("E", "gravitationalRacing: saveToFile()", "Save data incomplete, ignoring... (debug=[keyNotFound="..key.."])")
-						--Maybe let the user know?
-						return
-					end
+					errorHandler.assertTrue(found, "Save data incomplete, could not find key="..key)
 				end
 			end
 
@@ -388,8 +418,13 @@ end
 
 local function updateUnlocks(scenarioNames, scenarioInfo, mapData, saveData)
 	--[[
-	Unlocks any new scenarios (most likely after an update has occured with new scenarios
+	Unlocks any new scenarios (most likely after an update has occurred with new scenarios
 	such that the old scenarios did not know to unlock them)
+	Parameters:
+		scenarioNames   - the names of the scenarios unlocked
+		scenarioDetails - the information for each scenario
+		mapData         - the map gotten from trackRequirementMap
+		saveData        - the savefile contents
 	]]--
 	local medals = getNumberOfMedals()
 
@@ -418,11 +453,9 @@ end
 
 local function checkForUpdate()
 	--[[
-	Checks to see if a new update has occured that has added new tracks
+	Checks to see if a new update has occurred that has added new tracks
 	If so, adds these to the savefile
 	]]--
-	local content = {}
-
 	local files = {}
 	for _, map in ipairs(scenarioDetails.getVanillaMaps()) do
 		local trackFiles = FS:findFilesByPattern("levels/"..map.."/scenarios/gravitationalRacing/tracks", "*.json", 1, true, false)
@@ -434,7 +467,7 @@ local function checkForUpdate()
 	local newTracks = {}
 	for _, fileName in ipairs(files) do
 		local scenarioName, _ = scenarioDetails.getScenarioDetails(fileName)
-		--There is a new track so an update must have occured
+		--There is a new track so an update must have occurred
 		if not saveData.scenarios[scenarioName] then
 			table.insert(newTracks, scenarioName)
 		end
@@ -466,6 +499,8 @@ end
 local function setLastScenario(scName)
 	--[[
 	Sets the last scenario information to the save file
+	Parameters:
+		scName - the scenario name
 	]]--
 	saveToFile("lastScenario", {scenarioName = scName}, nil)
 end

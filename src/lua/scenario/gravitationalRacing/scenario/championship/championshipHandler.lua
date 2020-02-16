@@ -9,7 +9,7 @@ local BEST_MULTI = 100
 --The worst possible result for an AI is _% of base
 local WORST_MULTI = 150
 
-local AI_PERSONAILITIES = {
+local AI_PERSONALITIES = {
   {name = "", skillLevel = 1},
   {name = "the legendary bob", skillLevel = 2},
   {name = ""  , skillLevel = 3},
@@ -17,7 +17,7 @@ local AI_PERSONAILITIES = {
 }
 
 local drivers = {"player"}
-for _, data in ipairs(AI_PERSONAILITIES) do
+for _, data in ipairs(AI_PERSONALITIES) do
   table.insert(drivers, data.name)
 end
 
@@ -29,7 +29,7 @@ local function getAiSkillLevel(aiName)
   --[[
   Returns the skill level for an ai
   ]]--
-  for _, data in ipairs(AI_PERSONAILITIES) do
+  for _, data in ipairs(AI_PERSONALITIES) do
     if data.name == aiName then
       return data.skillLevel
     end
@@ -224,7 +224,7 @@ end
 local function formatNewStandings(previousStandingsFormatted, newStandings, currentStandings, scoringType)
   --[[
   Returns a formatted version of the new standings
-  The order is the same as previous standings for the UI to do the re-ording later
+  The order is the same as previous standings for the UI to do the re-ordering later
   ]]--
   local newStandings = {}
   local driverOrder = {}
@@ -274,8 +274,8 @@ local function finishEvent(scData)
   local newStandings               = addToCurrentStandings(currentStandings, roundStandingsFormatted)
   local newStandingsIndexed        = formatNewStandings(previousStandingsFormatted, newStandings, currentStandings, scoringType)
 
-  local roundStandingsFormatted    = addResultDifferential(roundStandingsFormatted                                                   , scoringType)
-  local previousStandingsFormatted = addResultDifferential(previousStandingsFormatted                                                , scoringType)
+  roundStandingsFormatted    = addResultDifferential(roundStandingsFormatted   , scoringType)
+  previousStandingsFormatted = addResultDifferential(previousStandingsFormatted, scoringType)
   --Removes the wins key as this will mess up the lowest score from getSmallestValue()
   local newStandingsFormatted      = addResultDifferential(tableComp.removeKey(deepcopy(newStandingsIndexed), "roundWins"), scoringType)
 
@@ -285,7 +285,7 @@ local function finishEvent(scData)
 
   --Convert times to string, if necessary
   if scoringType == "times" then
-    for i, v in ipairs(newStandingsFormatted) do
+    for _, v in ipairs(newStandingsFormatted) do
       v.total = scenarioDetails.timeToString(v.total)
     end
   end
@@ -325,7 +325,7 @@ end
 
 local function skip()
   --[[
-  Skips this event and moves to the nexf
+  Skips this event and moves to the next
   ]]--
   local championshipName = fileHandler.readSectionFromFile("championships").current
   local champData = jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/championshipConfigs.json"))[championshipName]

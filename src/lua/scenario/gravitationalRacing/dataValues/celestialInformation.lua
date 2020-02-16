@@ -76,43 +76,43 @@ data.blackhole = {
 data.CDCrucis = {
   mass           = data.sun.mass*42.6,
   radius         = data.sun.radius*5,
-  axisTilt       = 0, --Unkown
-  rotationPeriod = 25  --Unkown - random value
+  axisTilt       = 0, --Unknown
+  rotationPeriod = 25  --Unknown - random value
 }
 data.HD49798 = {
   mass           = data.sun.mass*1.5,
   radius         = data.sun.radius*1.45,
-  axisTilt       = 0, --Unkown
+  axisTilt       = 0, --Unknown
   rotationPeriod = 20  --unkown - random value
 }
 data.etaUrsaeMajoris = {
   mass           = data.sun.mass*6.1,
   radius         = data.sun.radius*3.4,
-  axisTilt       = 0, --Unkown
+  axisTilt       = 0, --Unknown
   rotationPeriod = 1.15
 }
 data.alphaVolantis = {
   mass           = data.sun.mass*1.87,
   radius         = data.sun.radius*1.9,
-  axisTilt       = 0, --Unkown
+  axisTilt       = 0, --Unknown
   rotationPeriod = 3.14 --unkown
 }
 data.procyonA = {
   mass           = data.sun.mass*1.499,
   radius         = data.sun.radius*2.048,
-  axisTilt       = 0, --Unkown
+  axisTilt       = 0, --Unknown
   rotationPeriod = 23
 }
 data.ABDoradusA = {
   mass           = data.sun.mass*0.75,
   radius         = data.sun.radius*0.96,
-  axisTilt       = 0, --Unkown
+  axisTilt       = 0, --Unknown
   rotationPeriod = 0.5148
 }
 data.CHXR73 = {
   mass           = data.sun.mass*0.32,
   radius         = data.sun.radius*0.83,
-  axisTilt       = 0, --Unkown
+  axisTilt       = 0, --Unknown
   rotationPeriod = 9.11
 }
 
@@ -123,10 +123,10 @@ local function getData(celestial, attribute)
   Returns the data for a specific attribute of a specific celestial
   If celestial is nil, returns all data for all celestials
   If attribute is nil, returns all data for that celestial
+
   ]]--
   if not celestial and attribute then
-    log("E", "celestialInformaton.getData()", "Cannot get attribute of a nil celestial!")
-    return
+    error("celestialInformation.getData() - Cannot get attribute of a nil celestial!")
   end
 
   --Handle all data request
@@ -136,8 +136,7 @@ local function getData(celestial, attribute)
 
   --All/one attribute(s) requires valid celestial
   if not data[celestial] then
-    log("E", "celestialInformaton.getData()", "Cannot get data of an unknown celestial! [celestial="..tostring(celestial).."]")
-    return
+    error("celestialInformation.getData() - Cannot get data of an unknown celestial")
   end
 
   --Handle all attributes request
@@ -147,8 +146,7 @@ local function getData(celestial, attribute)
 
   --Handle specific attribute request
   if not data[celestial][attribute] then
-    log("E", "celestialInformaton.getData()", "Cannot get an unknown attribute of this celestial! [attribute="..tostring(attribute).."]")
-    return
+    error("celestialInformation.getData() - Cannot get an unknown attribute of this celestial")
   else
     return data[celestial][attribute]
   end

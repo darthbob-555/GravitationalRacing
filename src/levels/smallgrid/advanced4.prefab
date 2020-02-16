@@ -770,7 +770,7 @@ $ThisPrefab = new SimGroup() {
       isRenderEnabled = "false";
       canSave = "1";
       canSaveDynamicFields = "1";
-         direction = "W";
+         direction = "E";
    };
    new TSStatic(checkpoint9) {
       shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";

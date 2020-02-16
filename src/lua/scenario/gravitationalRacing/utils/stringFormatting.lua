@@ -1,24 +1,24 @@
 local M = {}
 
+function repeatString(s, n)
+  --[[
+  Repeats a string, s, n times
+  This function is recursively defined
+  ]]--
+  --Base Case
+  if n == 0 then
+    return ""
+  end
+
+  --General Case
+  return s..repeatString(s, n-1)
+end
+
 local function formatColumns(l)
   --[[
   Formats the columns of the list of lists l
   ]]--
   local columnSizes = {}
-
-  repeatString = function(s, n)
-    --[[
-    Repeats a string, s, n times
-    This function is recursively defined
-    ]]--
-    --Base Case
-    if n == 0 then
-      return ""
-    end
-
-    --General Case
-    return s..repeatString(s, n-1)
-  end
 
   for pass = 1, 2 do
     for k, subList in pairs(l) do
@@ -29,7 +29,7 @@ local function formatColumns(l)
           element = tostring(element)
         end
 
-        elementLength = #element
+        local elementLength = #element
 
         --On the first pass, find the longest string in each column
         --On the second pass, update short strings to have required white space

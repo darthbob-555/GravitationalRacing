@@ -91,7 +91,7 @@ $ThisPrefab = new SimGroup() {
          pathID = "1";
    };
    new TSStatic(checkpoint2) {
-      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/next.dae";
+      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
       dynamic = "0";
       playAmbient = "1";
       meshCulling = "0";
@@ -735,7 +735,7 @@ $ThisPrefab = new SimGroup() {
          licenseText = "advanced";
    };
    new TSStatic(checkpoint3) {
-      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/inactive.dae";
+      shapeName = "levels/smallgrid/art/gravitationalRacing/checkpoints/next.dae";
       dynamic = "0";
       playAmbient = "1";
       meshCulling = "0";

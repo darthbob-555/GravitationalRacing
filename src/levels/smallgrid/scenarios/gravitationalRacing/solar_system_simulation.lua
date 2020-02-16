@@ -6,20 +6,17 @@ local ClassVector       = require("scenario/gravitationalRacing/classes/classVec
 
 local function lotsOfSuns()
   --[[
-  Creates lots of suns
+  Creates lots of suns in random positions
   ]]--
   for i = 1, 6 do
     local pos = ClassVector.new(0 + 5000*math.sin(math.rad(60 * i)), 2750 + 5000*math.cos(math.rad(60 * i)), 1750)
-    local name = "star_"..(i+1)
-    celestialsHandler.createCelestial("sun", pos, name, "star", math.random(5000, 15000), "dynamic", nil, true, false, nil)
+    celestialsHandler.createCelestial("sun", pos, "star_"..(i+1), "star", math.random(5000, 15000), "dynamic", nil, true, false, nil)
   end
 end
 
 local function onBeamNGTrigger(data)
-  if data.event == "enter" then
-    if data.triggerName == "lotsOfSuns" then
-      lotsOfSuns()
-    end
+  if data.event == "enter" and data.triggerName == "lotsOfSuns" then
+    lotsOfSuns()
   end
 end
 
@@ -34,6 +31,7 @@ end
 
 local function onRaceStart()
   for i = 1, 8 do
+    -- Finds each celestial and creates the label in-world
     celestialsHandler.findCelestial("planet_"..i, "dynamic"):createLabel()
   end
 end
@@ -41,6 +39,7 @@ end
 local function onScenarioChange(sc)
   if sc and sc.state == "pre-running" then
     local pos = scenetree.findObject("lotsOfSuns"):getPosition()
+    -- Place text in-world for the button
     ClassText.new("chaos", ClassVector.new(pos.x-6, pos.y+10, pos.z+1), 100)
   end
 end

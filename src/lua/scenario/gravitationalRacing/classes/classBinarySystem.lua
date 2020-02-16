@@ -1,33 +1,51 @@
 local factors        = require("scenario/gravitationalRacing/dataValues/factors")
 local ClassPath      = require("scenario/gravitationalRacing/classes/classPath")
+local ClassVector    = require("scenario/gravitationalRacing/classes/classVector")
 local ClassCelestial = require("scenario/gravitationalRacing/classes/classCelestial")
+local errorHandler   = require("scenario/gravitationalRacing/utils/errorHandler")
 
 ClassBinarySystem = {}
 ClassBinarySystem.__index = ClassBinarySystem
 
-function ClassBinarySystem:getOrbitRadius(quantity, dist, mass, parentMass)
+function ClassBinarySystem:getOrbitRadius(quantity, dist, mass1, mass2)
   --[[
   Returns the radius a celestial will orbit the barycenter at
+  Parameters:
+    quantity   - whether to return a scalar or vector quantity
+    dist       - the distance between both components
+    mass       - the mass of the first component
+    parentMass - the mass of the second component
+  Returns:
+    <number/ClassVector> - the orbit radius
   ]]--
+  errorHandler.assertNil(quantity, dist, mass1, mass2)
+  errorHandler.assertValidElement(quantity, {"vector", "scalar"}, "quantity must be 'scalar' or 'vector'")
+
   --r/[1 + (m1/m2)]
   if     quantity == "vector" then
-    return dist:divide(1 + mass/parentMass)
+    return dist:divide(1 + mass1/mass2)
   elseif quantity == "scalar" then
-    return dist   /   (1 + mass/parentMass)
+    return dist   /   (1 + mass1/mass2)
   end
 end
 
 function ClassBinarySystem:getOrbitalVelocity(component)
   --[[
-  Returns the orbital velocity for this component
+  Calculates the orbital velocity for this component
+  Parameters:
+    component - the component to find the velocity for
+  Returns:
+    <ClassVector> - the velocity vector
   ]]--
   local c1, c2
   if component == self.components[1] then
     c1 = component
     c2 = self.components[2]
-  else
+  elseif component == self.components[2] then
     c1 = self.components[1]
     c2 = component
+  else
+    error("This component is not part of this system")
   end
 
   local c2Mass = c2:getMass()
@@ -41,6 +59,10 @@ end
 function ClassBinarySystem:calculateBarycenter(components)
   --[[
   Calculates and return the barycenter of this system
+  Parameters:
+    components - the components of the system
+  Returns:
+    <ClassVector> - the position of the barycenter
   ]]--
   local c1, c2 = unpack(components)
   local c1Pos ,  c2Pos  = c1:getPosition(), c2:getPosition()
@@ -58,7 +80,8 @@ end
 
 function ClassBinarySystem:calculateFrequency()
   --[[
-  Returns the frequency of the system
+  Returns:
+    <number> the frequency of the system
   ]]--
   --T = sqrt(4pi² r³ / G(m + M))
   local r = self.components[1]:getPosition():getDistanceBetween(self.components[2]:getPosition()) / factors.getDistanceScaleFactor()
@@ -67,6 +90,9 @@ function ClassBinarySystem:calculateFrequency()
 end
 
 function ClassBinarySystem:new(systemName, components, orbitalFrequency)
+  errorHandler.assertNil(systemName, components)
+  errorHandler.assertTrue(#components == 2, "There must be only two components in a binary system")
+
   local self = {}
 
   --A system can be orbited by another star or system so can have its own path
@@ -134,14 +160,14 @@ function ClassBinarySystem:setupComponentPaths()
       config.frequency = self.orbitalFrequency
     end
 
-    --Adjust names to be valid for torquescript
+    --Adjust names to be valid for TorqueScript
     local c1Path = ClassPath.newCircularPath(data[1].name:gsub("[(|)]", {["("] = "_", ["|"] = "_", [")"] = "_"}), 0      , c1, self.barycenter, c1OrbitRadius, config.invertDirection, config.frequency)
     local c2Path = ClassPath.newCircularPath(data[2].name:gsub("[(|)]", {["("] = "_", ["|"] = "_", [")"] = "_"}), math.pi, c2, self.barycenter, c2OrbitRadius, config.invertDirection, config.frequency)
     c1:setPath(c1Path)
     c2:setPath(c2Path)
 
     --[[Show the second trail if it will be different to the first
-    Allow for two different stars orbitting but having mass defects due to rounding/floating point arithmetic]]--
+    Allow for two different stars orbiting but having mass defects due to rounding/floating point arithmetic]]--
     if math.abs(c1OrbitRadius - c2OrbitRadius) > 1 then
       c2Path:createTrail(true)
     end
@@ -152,7 +178,8 @@ end
 
 function ClassBinarySystem:getCelestialColour()
   --[[
-  Returns the colour of the system
+  Returns:
+    <table> the colour of the system
   ]]--
   local c1, c2 = self.components[1]:getCelestialColour(), self.components[2]:getCelestialColour()
   --Return the average of both rgb values
@@ -166,15 +193,21 @@ end
 function ClassBinarySystem:setPath(path)
   --[[
   Setups the system path
+  Parameters:
+    path - the new path to set for this system (must be circular)
   ]]--
+  errorHandler.assertNil(path)
+  --Don't redeclare
   if not self.systemPath then
+    errorHandler.assertTrue(path:instanceOf() == "ClassCircularPath", "path must be of type ClassCircularPath")
     self.systemPath = path
   end
 end
 
 function ClassBinarySystem:getSurfaceOfCelestial()
   --[[
-  Returns the lowest orbit
+  Returns:
+    the lowest orbit an object can orbit at
   ]]--
   local c1, c2 = unpack(self.components)
   --Find the outermost component
@@ -186,6 +219,8 @@ end
 function ClassBinarySystem:addChild(child)
   --[[
   Adds an orbiting celestial reference to this binary system
+  Parameters:
+    child - the child to add to this system
   ]]--
   table.insert(self.circumbinaries, child)
 end
@@ -208,10 +243,18 @@ function ClassBinarySystem:getComponents()
 end
 
 function ClassBinarySystem:getVelocity()
+  --[[
+  Returns:
+    <number> - the velocity of the system
+  ]]--
   return 2 * math.pi * self.barycenter:getDistanceBetween(self.components[1]:getPosition()) * self.orbitalFrequency
 end
 
 function ClassBinarySystem:isRemoved()
+  --[[
+  Returns:
+    <boolean> - whether the system is removed (either component suffices as one component cannot orbit a non-existent one)
+  ]]--
   return self.components[1]:isRemoved() and self.components[2]:isRemoved()
 end
 
@@ -228,6 +271,15 @@ function ClassBinarySystem:getName()
 end
 
 function ClassCelestial:callMethod(func, args)
+  --[[
+  Calls a method on this instance
+  Parameters:
+    func - the method to call
+    args - the args to apply to the method call (may be nil)
+  ]]--
+  errorHandler.assertNil(func)
+  errorHandler.assertTrue(self[func] ~= nil, func.." does not exist in the class")
+
   if args then
     return self[func](self, unpack(args))
   else
@@ -236,6 +288,11 @@ function ClassCelestial:callMethod(func, args)
 end
 
 function ClassBinarySystem:update(dt)
+  --[[
+  Updates the system's path and alerts any children it has of its new position
+  Parameters:
+    dt - the time since the last frame
+  ]]--
   if self.systemPath then
     local c1, c2 = unpack(self.components)
     local c1Removed, c2Removed = c1:isRemoved(), c2:isRemoved()
@@ -270,10 +327,13 @@ end
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(systemName, components, orbitalFrequency)
+  --[[
+  Attributes:
+    systemName       - the name of the system
+    components       - the components of the system
+    orbitalFrequency - the frequency of the system orbit
+  ]]--
   return ClassBinarySystem:new(systemName, components, orbitalFrequency)
 end
 
-local M = {}
-
-M.new = new
-return M
+return {new = new}

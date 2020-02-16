@@ -7,6 +7,7 @@ local ClassBinarySystem = require("scenario/gravitationalRacing/classes/classBin
 local factors           = require("scenario/gravitationalRacing/dataValues/factors")
 local field             = require("scenario/gravitationalRacing/celestial/gravitationalScalarField")
 local tableComp         = require("scenario/gravitationalRacing/utils/tableComprehension")
+local errorHandler      = require("scenario/gravitationalRacing/utils/errorHandler")
 
 local unpack = unpack or table.unpack
 
@@ -21,8 +22,13 @@ local passiveMode = false
 local function findCelestial(name, objectType)
 	--[[
 	Returns the celestial object in the table of celestials in the scenario
-	This function MUST be given the celestial name, but can also recieve an optional
-	parameter to narrow the search (object type)
+	This function MUST be given the celestial name, but can also receive an optional
+	parameter to narrow the search
+	Parameters:
+		name       - the name of the celestial
+		objectType - the object type of the celestial (optional)
+	Returns:
+		<ClassCelestial> - the celestial instance
 	]]--
 	if objectType then
 		local instance = celestials[objectType][name]
@@ -30,8 +36,8 @@ local function findCelestial(name, objectType)
 			return instance
 		end
 	else
-		for type, table in pairs(celestials) do
-			local instance = table[name]
+		for _, typeTables in pairs(celestials) do
+			local instance = typeTables[name]
 			if instance then
 				return instance
 			end
@@ -44,35 +50,40 @@ end
 local function findSystem(systemName)
 	--[[
 	Returns a system instance with name systemName
+	Parameters:
+		systemName - the name of the system
+	Returns:
+		<ClassBinarySystem> - the system instance
 	]]--
-	if not systemName then
-		error("gr:findSystem(): systemName is nil")
-	end
-
-	local system = systems[systemName]
-	if not system then
-		log("E", "gr:findSystem()", "Could not find system with systemName="..systemName)
-		return
-	end
-
-	return system
+	errorHandler.assertNil(systemName)
+	return systems[systemName]
 end
 
 local function systemNameToCelestials(systemName)
 	--[[
-	Returns the two celestials in a system
+	Returns the two parts in a system (each part can be either a celestial or another binary system)
+	Parameters:
+		systemName - the name of the system
+	Returns:
+		<string> - the first celestial/system
+		<string> - the second celestial/system
 	]]--
+	errorHandler.assertNil(systemName)
+
 	local type = systemName:match("%a+")
+	--Return the celestial on the left and right side of the |
 	return type.."_"..systemName:match("[%d]+"), type.."_"..systemName:match("(|[%d]+)"):gsub("|", "")
 end
 
 local function findNextName(type)
 	--[[
 	Finds the name of the next object (ie. if there are two black holes in-world, returns blackhole_3)
+	Parameters:
+		type - the type of celestial
+	Returns:
+		name - the name of the celestial
 	]]--
-	if not type then
-		return
-	end
+	errorHandler.assertNil(type)
 
 	local i = 1
 	local name = type.."_"..i
@@ -109,7 +120,15 @@ local function findCelestialMatch(func, value, returnInstances)
 	returnInstances is an optional parameter that tells this function to return instance,
 	not names instead
 	TODO allow arguments
+	Parameters:
+		func            - the name of the function to call on each celestial
+		value           - the expected value of the function return (can be nil)
+		returnInstances - whether to return instances or just names
+	Returns:
+		matching - the celestial which match the value when the method is called
 	]]--
+	errorHandler.assertNil(func)
+
 	local matching = {}
 
 	for _, objType in pairs(celestials) do
@@ -136,11 +155,19 @@ end
 local function callMethodOnCelestials(list, method, args)
 	--[[
 	Calls a method on a set of celestials, or all if not specified
+	Parameters:
+		list   - the list of celestials (can be nil to use all)
+		method - the method to call on each celestial
+		args   - the args to use for that method call (can be nil for no args)
 	]]--
+	errorHandler.assertNil(method)
+
+	--Whether to use specific celestials or not
 	local check = list ~= nil
 
 	for _, objType in pairs(celestials) do
 		for _, instance in pairs(objType) do
+			--Check that the celestial exists in the list
 			if check then
 				local instName = instance:getName()
 				for _, name in ipairs(list) do
@@ -156,19 +183,25 @@ local function callMethodOnCelestials(list, method, args)
 	end
 end
 
-local function isInBinarySystem(celestial, returnSystem)
+local function isInBinarySystem(component, returnSystem)
 	--[[
-	Returns whether this celestial is in a binary system
-	returnSystem is an optional parameter to return the system instance
+	Returns whether this component (system or celestial) is in a binary system
+	Parameters:
+		celestial    - the celestial instance to check
+		returnSystem - whether to return the system or not
+	Returns:
+		<boolean>           - whether this component is part of a system
+		<ClassBinarySystem> - the system this celestial is part of (nil if not wanted)
 	]]--
 	for _, systemInstance in pairs(systems) do
 		local c1, c2 = unpack(systemInstance:getComponents())
-		if c1 == celestial or c2 == celestial then
+		--Check either component to see if it is part of this system
+		if c1 == component or c2 == component then
 			return true, returnSystem and systemInstance
 		end
 	end
 
-	return false
+	return false, nil
 end
 
 local function sortDependencies(allCelestials)
@@ -178,11 +211,18 @@ local function sortDependencies(allCelestials)
 	Ie. circumbinary planet needs its two parent stars setup beforehand
 	Note: the specific order does not matter (ie. between two indexes), only that
 	parents should be first in the list
+	Parameters:
+		allCelestials - all celestials in the scenario
+	Returns:
+		orderedCelestials - the celestials ordered
 	]]--
+	errorHandler.assertNil(allCelestials)
+
 	local orderedCelestials = {instances = {}, names = {}}
 
 	local timeout = 3
 
+	--While there are celestials left (timeout is a debug to prevent infinite looping)
 	while tableComp.lengthOfTable(allCelestials) > 0 and timeout > 0 do
 		for name, celestial in pairs(allCelestials) do
 			local parentName = celestial:getParentCelestial()
@@ -194,7 +234,7 @@ local function sortDependencies(allCelestials)
 				binaryParentSetup = orderedCelestials.names[parent1] or orderedCelestials.names[parent2]
 			end
 
-			--TODO if binary, then check for hierachical levels with multiple |
+			--TODO if binary, then check for hierarchical levels with multiple |
 			--If it is a stand-alone celestial, it doesn't matter - neither if it is binary since it doesn't matter which sets up first
 			if not parentName or orderedCelestials.names[parentName] or isInBinarySystem(celestial) or binaryParentSetup then
 				table.insert(orderedCelestials.instances, celestial)
@@ -223,26 +263,41 @@ local function getOrbitalVelocity(celestial, parent)
 	Another formula can be derived for stars: a = F/m, F = GMm/r², a = v²/r -->  v1 = sqrt(G.M2.r1/r²)
 	Note2: The vector returned will always have the object going anti-clockwise
 	around its parent celestials, and starts in the +y direction
+	Parameters:
+		celestial - the celestial instance
+		parent    - the parent instance to the celestial
+	Returns:
+		<ClassVector> - a velocity vector for the celestial
 	]]--
+	errorHandler.assertNil(celestial, parent)
+
 	local inSystem, systemInstance = isInBinarySystem(celestial, true)
 	--Stars can orbit black holes as m1 >> m2 - for all intents and purposes
 	if inSystem then
 		return ClassVector.new(0, systemInstance:getOrbitalVelocity(celestial), 0)
 	else
 		local m = parent:getMass()
-		local	r = celestial:getPosition():getDistanceBetween(parent:getPosition()) / factors.getDistanceScaleFactor()
+		local r = celestial:getPosition():getDistanceBetween(parent:getPosition()) / factors.getDistanceScaleFactor()
+		local scaling = factors.getDistanceScaleFactor() * factors.getTimeScaleFactor()
 
-		return ClassVector.new(0, math.sqrt(ClassCelestial.getGravitationalConstant() * m/r) * factors.getDistanceScaleFactor() * factors.getTimeScaleFactor(), 0)
+		return ClassVector.new(
+				0,
+				math.sqrt(ClassCelestial.getGravitationalConstant() * m/r) * scaling,
+				0
+		)
 	end
 end
 
 local function setInitialVelocities(sortedCelestials)
 	--[[
 	Sets the initial velocities for all dynamic celestials
+	Parameters:
+		sortedCelestials - celestials where importance has been sorted
 	]]--
 	for _, celestial in ipairs(sortedCelestials) do
 		local parent = celestial:getParentCelestial()
 		if parent then
+			--Parent can either be a single celestial or a system (circumbinary)
 			parent = parent:find("|") and systems[parent] or findCelestial(parent)
 
 			v = getOrbitalVelocity(celestial, parent)
@@ -304,6 +359,8 @@ end
 local function findCelestials()
 	--[[
 	Finds all celestials in the scenario
+	Returns:
+		celestialsInScenario - all celestials in the scenario
 	]]--
 	local celestialsInScenario = {}
 	local categories = ClassCelestial.getTypes()
@@ -325,7 +382,7 @@ end
 
 local function resetCelestials()
 	--[[
-	Setup danger zone areas and delete old trails
+	Reset danger zone areas and delete old trails
 	]]--
 	for type, groupOfCelestials in pairs(celestials) do
 		for k, _ in pairs(groupOfCelestials) do
@@ -353,13 +410,18 @@ local function convertToSystemName(p1Name, p2Name)
 	--[[
 	Converts two parents orbiting each other into a system name for them
 	Examples:
-	1) star_2,     star_1     -> star_(1|2)
-	2) star_(1|2), star_3     -> star_((1|2)|3)
-	3) star_(1|7), star_(4|6) -> star_((1|7)|(4|6))
+		1) star_2,     star_1     -> star_(1|2)
+		2) star_(1|2), star_3     -> star_((1|2)|3)
+		3) star_(1|7), star_(4|6) -> star_((1|7)|(4|6))
 	Conventions:
-	Order of singular celestials should be smallest first - see 1)
-	In cases where a system and a singular celestial, the system goes first - see 2)
-	In cases where 2 systems are orbiting, the one with the smallest FIRST celestial id goes first - see 3)
+		Order of singular celestials should be smallest first - see 1)
+		In cases where a system and a singular celestial, the system goes first - see 2)
+		In cases where 2 systems are orbiting, the one with the smallest FIRST celestial id goes first - see 3)
+	Parameters:
+		p1Name - the first parent
+		p2Name - the second parent
+	Returns:
+		<string> - the system name comprised of the two parents
 	]]--
 	local isP1Binary, isP2Binary = p1Name:find("|"), p2Name:find("|")
 
@@ -386,16 +448,17 @@ local function createInstances(vehicles)
 	--[[
 	Finds and creates instances of every celestial in scenario
 	Returns celestials that need additional usage outside of this function
+	Parameters:
+		vehicles - the vehicle instances
 	]]--
 	--Reset/update variables
 	celestials = {fixedDynamic = {}, dynamic = {}, static = {}}
 	initial = {positions = {length = 0}, scale = {}}
+	supernovae = {}
 
 	local foundCelestials = findCelestials()
 	--Stores all children to a parent
 	local children = {}
-
-	supernovae = {}
 	local binaries = {}
 
 	for _, celestial in ipairs(foundCelestials) do
@@ -403,14 +466,15 @@ local function createInstances(vehicles)
 
 		local name = objData.name
 		local objectType = objData.objectType
-
-		if not objectType or (objectType == "fixedDynamic" and not objData.path) then
-			error("Object "..name.." has not been properly setup as a celestial! [objectType="..(objectType or "nil")..", path="..(objData.path or "nil").."]")
-		end
-
 		local celestialType = name:gsub("_%d+", "")
 		local class = objData.celestialClass
 		local parent = objData.orbitingBody
+
+		errorHandler.assertNil(objectType)
+		errorHandler.assertTrue(
+				not (objectType == "fixedDynamic" and not objData.path),
+				"A fixedDynamic celestial requires a path"
+		)
 
 		local isPassive
 		--The celestial gets preferential treatment over passivity
@@ -540,6 +604,10 @@ end
 local function createCelestials(fullReset, vehicles, passive)
 	--[[
 	Creates the celestials in the scenario into objects
+	Parameters:
+		fullReset - whether this is a full reset
+		vehicles  - the vehicle instances in the scenario
+		passive   - whether the scenario is in passive mode
 	]]--
 	passiveMode = passive
 
@@ -706,10 +774,20 @@ end
 local function createSystem(systemName, components, orbitalFrequency)
 	--[[
 	Creates a new system and returns it
+	Parameters:
+		systemName       - the name of the system to create
+		components       - the two components of the system
+		orbitalFrequency - the orbital orbitalFrequency of the system (can be nil to calculate it)
+	Returns:
+		systemInst - the system instance
 	]]--
+	errorHandler.assertNil(systemName, components)
+	errorHandler.assertTrue(#components == 2, "Components must be comprised of two components")
+
 	local systemInst = ClassBinarySystem.new(systemName, components, orbitalFrequency)
 	systemInst:initialise()
 	systemInst:setupComponentPaths()
+	--Add into the systems table for updating
 	systems[systemName] = systemInst
 	return systemInst
 end
@@ -717,6 +795,10 @@ end
 local function createCelestial(class, shapeName, initPos, name, type, scale, objectType, orbitingBody, passive, delayed, rotation, pathData)
 	--[[
 	Creates a new celestial
+	Parameters:
+		(See ClassCelestial)
+	Returns:
+		obj - the celestial instance
 	]]--
 	--Create the object
 	if not scenetree.findObject(name) then
@@ -794,14 +876,28 @@ end
 local function deleteSystem(systemName)
 	--[[
 	Deletes a system
+	Parameters:
+		systemName - the system name
 	]]--
-	systems[systemName]:delete()
+	errorHandler.assertNil(systemName)
+
+	local sysInstance = systems[systemName]
+	if not sysInstance then
+		log("I", "celestialHandler:deleteSystem()", "No system called "..systemName.."exists")
+		return
+	end
+
+	sysInstance:delete()
 end
 
 local function deleteCelestialFromInst(instance)
 	--[[
 	Deletes a celestial, given its instance
+	Parameters:
+		instance - the celestial instance
 	]]--
+	errorHandler.assertNil(instance)
+
 	celestials[instance:getObjectType()][instance:getName()] = nil
 	instance:delete()
 end
@@ -809,11 +905,11 @@ end
 local function deleteCelestial(name, objectType)
 	--[[
 	Deletes a celestial
-	(objectType is optional for quicker deletion)
+	Parameters:
+		name       - the name of the celestial
+		objectType - the object type of the celestial (optional for more efficient searching)
 	]]--
-	if not name then
-		error("gr:deleteCelestial(): name is nil")
-	end
+	errorHandler.assertNil(name)
 
 	if objectType then
 		local instance = findCelestial(name, objectType)
@@ -861,8 +957,7 @@ local function printResults()
 	--[[
 	A testing function for printing the various celestial related data it has created
 	]]--
-	print("Celestials: [Passive Mode = "..tostring(passiveMode).."]")
-	print()
+	print("\nCelestials: [Passive Mode = "..tostring(passiveMode).."]\n")
 	local celestialInfo = {}
 	local keys = ClassCelestial.toListKeys()
 
@@ -874,12 +969,10 @@ local function printResults()
 
 	stringFormatter.printClassInfo(celestialInfo, keys)
 
-	print()
-	print("Scenario running with factors:")
+	print("\nScenario running with factors:")
 	print("  Distance Factor: "..factors.getDistanceScaleFactor())
 	print("  Time Factor: "..factors.getTimeScaleFactor())
-	print("  Radius Factor: "..factors.getActualRadiusScaleFactor())
-	print()
+	print("  Radius Factor: "..factors.getActualRadiusScaleFactor().."\n")
 end
 
 M.findCelestial = findCelestial

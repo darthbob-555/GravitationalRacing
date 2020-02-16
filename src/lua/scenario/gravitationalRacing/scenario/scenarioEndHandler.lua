@@ -5,11 +5,18 @@ local shortcutHandler         = require("scenario/gravitationalRacing/scenario/t
 local tableComp               = require("scenario/gravitationalRacing/utils/tableComprehension")
 local championshipHandler     = require("scenario/gravitationalRacing/scenario/championship/championshipHandler")
 local scenarioDetailsHandler  = require("scenario/gravitationalRacing/scenario/scenarioDetails")
+local errorHandler            = require("scenario/gravitationalRacing/utils/errorHandler")
 
 local function getUnlocksFromMedals(mapData)
   --[[
-  Returns the unlocks from having x amount of medals
+  Gets the unlocks from having x amount of medals
+  Parameters:
+    mapData - the map of unlocks gotten from the trackRequirementMap.json file
+  Returns:
+    <table> - the now unlocked scenarios
   ]]--
+  errorHandler.assertNil(mapData)
+
   local unlocks = {}
   local medals = fileHandler.getNumberOfMedals()
 
@@ -25,14 +32,20 @@ end
 local function processUnlocks(scenarioName)
   --[[
   Finds which scenarios are now unlocked and returns them formatted for the UI
+  Parameters:
+    scenarioName - the name of the scenario
+  Returns:
+    unlocksFormatted - a table of unlocks with their details
   ]]--
+  errorHandler.assertNil(scenarioName)
+
   local mapData = jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/trackRequirementMap.json"))
   --Unlocks from completing the scenario
   local unlocks = mapData[scenarioName].unlocks
   local medalUnlocks = getUnlocksFromMedals(mapData)
 
   local unlocksFormatted = {}
-  for i, scName in ipairs(tableComp.mergeAppend(unlocks, medalUnlocks)) do
+  for _, scName in ipairs(tableComp.mergeAppend(unlocks, medalUnlocks)) do
     local alreadyUnlocked = fileHandler.readFromFile(scName, "unlocked")
 
     if not alreadyUnlocked then
@@ -65,7 +78,12 @@ end
 local function finish(resets, sourceFile)
   --[[
   Finishes the scenario
+  Parameters:
+    resets     - the number of resets the player finished the scenario with
+    sourceFile - the file directory of the scenario
   ]]--
+  errorHandler.assertNil(resets, sourceFile)
+
   local scenarioName, scenarioDifficulty = scenarioDetailsHandler.getScenarioDetails(sourceFile)
 
   local targetData = jsonDecode(readFile("lua/scenario/gravitationalRacing/dataValues/targetData.json"))[scenarioName]

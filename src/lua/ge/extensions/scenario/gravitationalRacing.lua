@@ -22,8 +22,13 @@ local function requestHubWorld(msg, params)
   --[[
   Responsible for transferring messages from UI to the hub world, and then
   sending back a message
+  Parameters:
+    msg    - the message to send
+    params - the data to accompany the message
+  Returns:
+    <table> - a return message to the UI
   ]]--
-  return require("levels/smallgrid/scenarios/gravitationalRacing/hubworld").uiRequest(msg, params)
+  return require("hubworld").uiRequest(msg, params)
 end
 
 

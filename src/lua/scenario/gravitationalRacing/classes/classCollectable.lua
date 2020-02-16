@@ -1,20 +1,32 @@
-local fileHandler = require("scenario/gravitationalRacing/utils/fileHandler")
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
 
 ClassCollectable = {}
 ClassCollectable.__index = ClassCollectable
 
 function ClassCollectable:setVisible(id, visible)
   --[[
-  Sets the collectable's visibilty
+  Sets the collectable's visibility
+  Parameter:
+    id - the id of the collectable
+    visible - the visibility of the collectable
   ]]--
-  --If the collectable is already hidden, in can still showup. Applying it again will not have any affect,
+  errorHandler.assertNil(id, visible)
+
+  local name = "collectable"..id
+  if not scenetree.findObject(name) then
+    log("W", "ClassCollectable:setVisible()", "No collectable with id="..id.." exists")
+    return
+  end
+
+  --If the collectable is already hidden, in can still show-up. Applying it again will not have any affect,
   --so change the state to the opposite and then the correct state to force it to do so
-  TorqueScript.eval('collectable'..id..'.hidden = "'..tostring(visible)..'";')
-  TorqueScript.eval('collectable'..id..'.hidden = "'..tostring(not visible)..'";')
-  -- scenetree.findObject("collectable"..id).hidden = not visible
+  TorqueScript.eval(name..'.hidden = "'..tostring(visible)..'";')
+  TorqueScript.eval(name..'.hidden = "'..tostring(not visible)..'";')
 end
 
 function ClassCollectable:new(id, position, visible)
+  errorHandler.assertNil(id, position)
+
   local self = {}
   self.collected = false
   self.canBeCollected = visible
@@ -44,6 +56,11 @@ function ClassCollectable:instanceOf()
 end
 
 function ClassCollectable:getCollectRadius()
+  --[[
+  Returns the minimal distance the collectable can be collected from
+  Returns:
+    <number> - the minimum distance
+  ]]--
   return 10
 end
 
@@ -58,6 +75,8 @@ end
 function ClassCollectable:animate(dt)
   --[[
   Animates the collectable by rotating and bobbing it
+  Parameter:
+    dt - the time since last frame
   ]]--
   TorqueScript.eval('collectable'..self.id..'.rotation = "0 0 -1 '..self.angle..'";')
 
@@ -84,10 +103,13 @@ function ClassCollectable:reset()
   end
 end
 
-function ClassCollectable:update(dt, vehPos, currentCheckpoint, currentLap)
+function ClassCollectable:update(dt, vehPos)
   --[[
-  Updates the collectable, suchg as animating
+  Updates the collectable, such as animating and checking the distance of a vehicle for collection
   If the collectable is collected, the function effectively does nothing
+  Parameter:
+    dt     - the time since last frame
+    vehPos - the position of the vehicle to use for determining collection
   ]]--
   if self.visible and not self:isCollected() then
     local distance = vehPos:getDistanceBetween(self:getPosition())
@@ -108,6 +130,12 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 local function new(id, position, visible)
+  --[[
+  Attributes:
+    id       - the id
+    position - the position
+    visible  - whether the collectable is initially visible
+  ]]--
   return ClassCollectable:new(id, position, visible)
 end
 

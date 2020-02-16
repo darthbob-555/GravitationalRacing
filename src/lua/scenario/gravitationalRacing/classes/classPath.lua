@@ -1,16 +1,24 @@
 ClassPath = {}
 ClassPath.__index = ClassPath
 
-local ClassVector = require("scenario/gravitationalRacing/classes/classVector")
-local factors = require("scenario/gravitationalRacing/dataValues/factors")
+local ClassVector  = require("scenario/gravitationalRacing/classes/classVector")
+local errorHandler = require("scenario/gravitationalRacing/utils/errorHandler")
 
 local function getMaxTrails()
+  --[[
+  Returns:
+    <number> - the maximum number of trails a celestial can have
+  ]]--
   return 100
 end
 
 local function getTrailSize(orbitRadius)
   --[[
   Returns the scale of each trail, based on the orbit radius
+  Parameters:
+    orbitRadius - the orbit radius
+  Returns:
+    <number> - the scale of each trail
   ]]--
   return math.min(5, 5*orbitRadius/100)
 end
@@ -18,9 +26,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 function ClassPath:new(attributes)
-  if not attributes then
-    error("One or more parameters is nil")
-  end
+  errorHandler.assertNil(attributes)
 
   local self = {trail = {}, MAX_TRAILS = getMaxTrails}
   for k, v in pairs(attributes) do
@@ -58,6 +64,8 @@ end
 function ClassPath:updateTrail(show)
   --[[
   Displays/hides the trail at this object's position
+  Parameters:
+    show - whether to show the trail
   ]]--
   --Loop through list of trail points
   for i = 1, #self.trail do
@@ -80,6 +88,10 @@ function ClassPath:deleteTrail()
   end
 end
 
+function ClassPath:instanceOf()
+  return "ClassPath"
+end
+
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
 ClassCircularPath = {}
@@ -88,6 +100,11 @@ ClassCircularPath.__index = ClassCircularPath
 function ClassCircularPath:calculateFrequency(celestialVel, radius)
   --[[
   Calculates and returns the speed of the orbital path
+  Parameters:
+    celestialVel - the celestial's velocity
+    radius       - the radius of the orbital path
+  Returns:
+    <number> - the frequency of the orbital path
   ]]--
   return celestialVel / (2*math.pi*radius)
 end
@@ -95,6 +112,11 @@ end
 function ClassCircularPath:createTrailPoints(radius, offset)
   --[[
   Creates each trail point
+  Parameters:
+    radius - the radius of the orbital path
+    offset - the offset of the trail points
+  Returns:
+    trail - each trail point
   ]]--
   local circumference = 2 * math.pi * radius
   --The number of trails should not exceed the trail limit, and are spaced every 10m
@@ -105,21 +127,19 @@ function ClassCircularPath:createTrailPoints(radius, offset)
 
   for theta = 0, 2*math.pi, angleIncrement do
     table.insert(trail, ClassVector.new(
-    offset:getX() + radius*math.cos(theta),
-    offset:getY() + radius*math.sin(theta),
-    offset:getZ()
-  ))
-end
+      offset:getX() + radius*math.cos(theta),
+      offset:getY() + radius*math.sin(theta),
+      offset:getZ()
+    ))
+  end
 
-return trail
+  return trail
 end
 
 function ClassCircularPath:new(trailName, angle, celestial, center, radius, invertDirection, frequency)
-  if not trailName or not angle or not center or not radius then
-    error("One or more parameters is nil!")
-  end
+  errorHandler.assertNil(trailName, angle, celestial, center, radius)
 
-  local frequency = frequency or ClassCircularPath:calculateFrequency(celestial:getVelocity():getMagnitude(), radius)
+  frequency = frequency or ClassCircularPath:calculateFrequency(celestial:getVelocity():getMagnitude(), radius)
 
   local self = ClassPath:new({
     name          = trailName,
@@ -145,10 +165,12 @@ end
 setmetatable(ClassCircularPath, {__index = ClassPath})
 
 function ClassCircularPath:setFrequency(freq)
+  errorHandler.assertNil(freq)
   self.frequency = freq
 end
 
 function ClassCircularPath:setOffset(offset)
+  errorHandler.assertNil(offset)
   self.offset = offset:clone()
   self.trail = self:createTrailPoints(self.radius, self.offset)
   self:updateTrail(true)
@@ -161,13 +183,18 @@ end
 function ClassCircularPath:update(dt)
   --[[
   Finds the next position this object will be in, and returns it
+  Parameters:
+    dt - the time since the last frame
+  Returns:
+    <ClassVector> - the new position of the celestial
   ]]--
   self.angle = self.angle + (dt*self.frequency) * 2*math.pi * self.direction
+
   return ClassVector.new(
   self.offset:getX() + self.radius*math.cos(self.angle),
   self.offset:getY() + self.radius*math.sin(self.angle),
-  self.offset:getZ()
-)
+      self.offset:getZ()
+  )
 end
 
 function ClassCircularPath:reset()
@@ -178,12 +205,25 @@ function ClassCircularPath:reset()
   self:updateTrail(true)
 end
 
+function ClassCircularPath:instanceOf()
+  return "ClassCircularPath"
+end
+
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 ClassLinearPath = {}
 ClassLinearPath.__index = ClassLinearPath
 
 function ClassLinearPath:getBounds(baseDirection, offset, length)
+  --[[
+  Gets the bounds of the path
+  Parameters:
+    baseDirection - the axis the path is on
+    offset        - the center of the path
+    length        - the radius of one section of the path
+  Returns:
+    <table> - the min and max bounds of the path
+  ]]--
   if baseDirection == "X" then
     return {
       offset:getX() + length,
@@ -200,6 +240,12 @@ end
 function ClassLinearPath:createTrailPoints(baseDirection, offset, length)
   --[[
   Creates each trail point
+  Parameters:
+    baseDirection - the axis the path is on
+    offset        - the center of the path
+    length        - the radius of one section of the path
+  Returns:
+    <table> - the trail positions
   ]]--
   local bounds = ClassLinearPath:getBounds(baseDirection, offset, length)
 
@@ -220,12 +266,10 @@ function ClassLinearPath:createTrailPoints(baseDirection, offset, length)
 end
 
 function ClassLinearPath:new(trailName, celestial, invertDirection, frequency, length, direction)
-  if not celestial or not frequency or not length or not direction then
-    error("One or more parameters is nil! [celestial="..tostring(celestial and celestial or 'nil')..", frequency="..tostring(frequency and frequency or 'nil')..", length="..tostring(length and length or 'nil')..", direction="..tostring(direction and direction or 'nil').."]")
-  end
+  errorHandler.assertNil(trailName, celestial, frequency, length, direction)
+  errorHandler.assertValidElement(direction, {"X", "Y"}, "directin must be either X or Y")
 
   local celestialPos = celestial:getPosition()
-  local lengthVec = direction == "X" and ClassVector.new(length, 0, 0) or ClassVector.new(0, length, 0)
 
   local self = ClassPath:new({
     name          = trailName,
@@ -256,6 +300,10 @@ setmetatable(ClassLinearPath, {__index = ClassPath})
 function ClassLinearPath:update(dt)
   --[[
   Finds the next position this object will be in, and returns it
+  Parameters:
+    dt - the time since last frame
+  Returns:
+    <ClassVector> - the new position of the celestial
   ]]--
   self.angle = self.angle + (dt*self.frequency) * 2*math.pi
 
@@ -277,12 +325,18 @@ function ClassLinearPath:getDirection()
   return self.baseDirection
 end
 
+function ClassLinearPath:instanceOf()
+  return "ClassLinearPath"
+end
+
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 ClassInfiniteLinearPath = {}
 ClassInfiniteLinearPath.__index = ClassInfiniteLinearPath
 
 function ClassInfiniteLinearPath:new(velocity, initPos)
+  errorHandler.assertNil(velocity, initPos)
+
   local self = {
     initPos = initPos,
     velocity = velocity,
@@ -296,19 +350,47 @@ end
 function ClassInfiniteLinearPath:update(dt)
   --[[
   Returns a new position vector
+  Parameters:
+    dt - the time since the last frame
+  Parameters:
+    <ClassVector> - the new position of the celestial
   ]]--
   self.time = self.time + dt
+
   local dVel = self.velocity:multiply(self.time)
   return self.initPos:add(dVel)
+end
+
+function ClassInfiniteLinearPath:instanceOf()
+  return "ClassInfiniteLinearPath"
 end
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 local function newCircularPath(trailName, angle, celestial, center, radius, invertDirection, frequency)
+  --[[
+  Attributes:
+    trailName       - the name of the trail
+    angle           - the starting angle
+    celestial       - the celestial the path is for
+    center          - the center of the path
+    radius          - the radius of the path
+    invertDirection - whether the celestial will orbit counterclockwise
+    frequency       - the frequency of the orbit (can be nil to auto calculate)
+  ]]--
   return ClassCircularPath:new(trailName, angle, celestial, center, radius, invertDirection, frequency)
 end
 
 local function newLinearPath(trailName, celestial, invertDirection, frequency, length, direction)
+  --[[
+  Attributes:
+    trailName       - the name of the trail
+    celestial       - the celestial the path is for
+    invertDirection - whether the celestial will orbit counterclockwise
+    frequency       - the frequency of the orbit (can be nil to auto calculate)
+    length          - the length of one 'arm'/side of the path
+    direction       - the axis of the path
+  ]]--
   return ClassLinearPath:new(trailName, celestial, invertDirection, frequency, length, direction)
 end
 
