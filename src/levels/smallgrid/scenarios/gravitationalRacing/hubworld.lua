@@ -292,6 +292,7 @@ local function setupSourceFiles()
   for _, objName in ipairs(triggersGroup) do
     local scenarioName = objName:gsub("sc_", "")
     local formattedName = scenarioName:gsub(" ", "_"):lower()
+	print(scenarioName)
     sourceFiles[scenarioName] = scenarioDetailsHandler.getSourcePath(formattedName)
   end
 end

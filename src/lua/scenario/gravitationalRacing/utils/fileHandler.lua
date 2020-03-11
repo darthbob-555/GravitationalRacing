@@ -159,6 +159,10 @@ local function readFromFile(scName, attribute)
 	]]--
 	errorHandler.assertNil(scName)
 
+	if scName == "Tutorial" then
+		return
+	end
+
 	local fileContents = readWholeFile().scenarios[scName]
 
 	if not attribute then

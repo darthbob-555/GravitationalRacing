@@ -28,7 +28,7 @@ local function requestHubWorld(msg, params)
   Returns:
     <table> - a return message to the UI
   ]]--
-  return require("hubworld").uiRequest(msg, params)
+  return require("levels/smallgrid/scenarios/gravitationalRacing/hubworld").uiRequest(msg, params)
 end
 
 

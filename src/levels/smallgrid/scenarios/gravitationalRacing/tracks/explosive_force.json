@@ -5,7 +5,7 @@
     "previews": ["solarsystem.png"],
     "type": "race",
     "authors": "Darthbob555",
-    "restrictToCampaign": false,
+    "restrictToCampaign": true,
 
     "difficulty": "-1",
 
