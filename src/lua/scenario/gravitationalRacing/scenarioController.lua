@@ -4,8 +4,10 @@
 
 local M = {}
 
+local skyHandler          = require("scenario/gravitationalRacing/utils/skyHandler")
 local errorHandler        = require("scenario/gravitationalRacing/utils/errorHandler")
 local ClassVehicle        = require("scenario/gravitationalRacing/classes/classVehicle")
+local scenarioDetails     = require("scenario/gravitationalRacing/scenario/scenarioDetails")
 local shortcutHandler     = require("scenario/gravitationalRacing/scenario/track/shortcutHandler")
 local celestialsHandler   = require("scenario/gravitationalRacing/celestial/celestialsHandler")
 local checkpointsHandler  = require("scenario/gravitationalRacing/scenario/track/checkpointsHandler")
@@ -137,6 +139,9 @@ local function initialise(srcFile)
     shortcutHandler.initialise(fullReset, srcFile)
     shortcutHandler.printResults()
   end
+
+  local _, dif = scenarioDetails.getScenarioDetails(srcFile)
+  skyHandler.initialise(dif)
 
   celestialsHandler.initCelestials()
   celestialsHandler.printResults()

@@ -10,7 +10,7 @@ local function lotsOfSuns()
   ]]--
   for i = 1, 6 do
     local pos = ClassVector.new(0 + 5000*math.sin(math.rad(60 * i)), 2750 + 5000*math.cos(math.rad(60 * i)), 1750)
-    celestialsHandler.createCelestial("sun", pos, "star_"..(i+1), "star", math.random(5000, 15000), "dynamic", nil, true, false, nil)
+    celestialsHandler.createCelestial("ClassCelestial", "sun", pos, "star_"..(i+1), "star", math.random(5000, 15000), "dynamic", nil, true, false, nil, nil, nil)
   end
 end
 
@@ -44,7 +44,6 @@ local function onScenarioChange(sc)
   end
 end
 
-M.onPreRender = onPreRender
 M.onBeamNGTrigger = onBeamNGTrigger
 M.onScenarioRestarted = onScenarioRestarted
 M.onRaceStart = onRaceStart

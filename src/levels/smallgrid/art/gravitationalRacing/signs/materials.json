@@ -1,0 +1,16 @@
+{
+  "sign_black": {
+    "name": "sign_black",
+    "mapTo": "sign_black",
+    "class": "material",
+    "persistentId": "f1c92914-bdc6-4aa4-9359-135c5774468b",
+    "Stages": [
+      {
+        "colorMap": "textures/gravitationalRacing/hubWorld/black.png"
+      },
+      {},
+      {},
+      {}
+    ]
+  }
+}

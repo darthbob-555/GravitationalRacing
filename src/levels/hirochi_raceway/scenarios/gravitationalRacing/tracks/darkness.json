@@ -19,16 +19,13 @@
 
     "levelObjects": {
       "sunsky": {
-        "colorize": "0 0 0 1",
-        "fogScale": "0 0 0 1",
-        "sunScale": "0 0 0 1",
-        "sunSize": "0",
-        "ambientScale": "1 1 1 1"
+        "sunSize": 0,
+        "skyBrightness": 3
       },
-      "theLevelInfo": {
-        "fogDensity": "0.02"
+      "thelevelInfo": {
+        "fogDensity": 0
       },
-      "clouds": {
+	  "clouds": {
         "coverage": 0.1
       },
       "clouds1": {

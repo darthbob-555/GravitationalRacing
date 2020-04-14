@@ -1,0 +1,82 @@
+{
+  "SpaceSkyDefault": {
+    "name": "SpaceSkyDefault",
+    "mapTo": "unmapped_mat",
+    "class": "material",
+    "persistentId": "f7ef32b6-6d32-493e-bbad-e0dc55066972",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "cubemap": "cubemap_space_default"
+  },
+  "SpaceSkyBlue": {
+    "name": "SpaceSkyBlue",
+    "mapTo": "unmapped_mat",
+    "class": "material",
+    "persistentId": "f7ef32b6-6d32-493e-bbad-e0dc55066972",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "cubemap": "cubemap_space_blue"
+  },
+  "SpaceSkyGreen": {
+    "name": "SpaceSkyGreen",
+    "mapTo": "unmapped_mat",
+    "class": "material",
+    "persistentId": "f7ef32b6-6d32-493e-bbad-e0dc55066972",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "cubemap": "cubemap_space_green"
+  },
+  "SpaceSkyYellow": {
+    "name": "SpaceSkyYellow",
+    "mapTo": "unmapped_mat",
+    "class": "material",
+    "persistentId": "f7ef32b6-6d32-493e-bbad-e0dc55066972",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "cubemap": "cubemap_space_yellow"
+  },
+  "SpaceSkyRed": {
+    "name": "SpaceSkyRed",
+    "mapTo": "unmapped_mat",
+    "class": "material",
+    "persistentId": "f7ef32b6-6d32-493e-bbad-e0dc55066972",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "cubemap": "cubemap_space_red"
+  },
+  "i_green_emissive": {
+    "name": "i_green_emissive",
+    "mapTo": "i_green_emissive",
+    "class": "material",
+    "persistentId": "06cac736-1d4b-4e0b-b43a-18d4a4f85032",
+    "Stages": [
+      {
+        "colorMap": "textures/intersection/colours/i_lightgreen.png",
+        "emissive": true
+      },
+      {},
+      {},
+      {}
+    ]
+  }
+}

@@ -123,7 +123,7 @@ singleton Material(gr_wall_arrow_right)
    mapTo = "wall_arrow_right";
    colorMap[0] = "textures/gravitationalRacing/track/wall_arrow_right.png";
    useAnisotropic[0] = "1";
-   emissive[0] = "0";
+   emissive[0] = "1";
    animFlags[0] = "0x00000001";
    scrollDir[0] = "-1 0";
    scrollSpeed[0] = "0.5";
@@ -135,7 +135,7 @@ singleton Material(gr_wall_arrow_left)
 {
    mapTo = "wall_arrow_left";
    colorMap[0] = "textures/gravitationalRacing/track/wall_arrow_left.png";
-   emissive[0] = "0";
+   emissive[0] = "1";
    animFlags[0] = "0x00000001";
    scrollDir[0] = "1 0";
    scrollSpeed[0] = "0.5";

@@ -289,7 +289,7 @@ function ClassCelestial:createLabel()
   --Do not recreate an existing label
   if not self.label then
     local pos = self.position
-    self.label = ClassText.new(scenetree.findObject(self.name).model:gsub("levels/smallgrid/art/gravitationalRacing/celestialbodies/", ""):gsub(".dae", ""), ClassVector.new(pos:getX(), pos:getY() + self:getScaledRadius() + 5, pos:getZ()))
+    self.label = ClassText.new(scenetree.findObject(self.name).shapeName:gsub("levels/smallgrid/art/gravitationalRacing/celestialbodies/", ""):gsub(".dae", ""), ClassVector.new(pos:getX(), pos:getY() + self:getScaledRadius() + 5, pos:getZ()))
   end
 end
 
@@ -819,7 +819,7 @@ function ClassCelestial:collide(object)
 
   --Determine how much the objects are intersecting one another by; this distance
   --will be what is to be shifted around between objects
-  local intersection = (object:getScaledRadius() + self:getScaledRadius()) - object:getDistanceBetween(self.position)
+  local intersection = (object:getScaledRadius() + self:getScaledRadius()) - object:getPosition():getDistanceBetween(self.position)
 
   local objectToLose, objectToGain
   --Give preferential treatment to this object if they both have the same mass
@@ -1110,7 +1110,7 @@ function ClassCelestial:updateTrail()
       table.remove(self.trail, 1)
     end
 
-    self:placeTrail(true)
+    --self:placeTrail(true)
   end
 end
 

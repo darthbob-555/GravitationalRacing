@@ -1,0 +1,14 @@
+{
+  "cubemap_space_default" : {
+    "name" : "cubemap_space_default",
+    "class" : "CubemapData",
+    "cubeFace" : [
+      "/levels/smallgrid/art/cubemaps/cubemap_space_default/cubemap/right",
+      "/levels/smallgrid/art/cubemaps/cubemap_space_default/cubemap/left",
+      "/levels/smallgrid/art/cubemaps/cubemap_space_default/cubemap/top",
+      "/levels/smallgrid/art/cubemaps/cubemap_space_default/cubemap/bottom",
+      "/levels/smallgrid/art/cubemaps/cubemap_space_default/cubemap/front",
+      "/levels/smallgrid/art/cubemaps/cubemap_space_default/cubemap/back"
+    ]
+  }
+}

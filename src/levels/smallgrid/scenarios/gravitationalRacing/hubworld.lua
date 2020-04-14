@@ -1,5 +1,6 @@
 local M = {}
 
+local skyHandler             = require("scenario/gravitationalRacing/utils/skyHandler")
 local fileHandler            = require("scenario/gravitationalRacing/utils/fileHandler")
 local scenarioDetailsHandler = require("scenario/gravitationalRacing/scenario/scenarioDetails")
 local scenarioController     = require("scenario/gravitationalRacing/scenarioController")
@@ -612,6 +613,8 @@ local function onScenarioChange(sc)
     --Happens after setupScenery to save creating and deleting trails or non-shown celestials (which is expensive to do so)
     celestialsHandler.initCelestials()
     celestialsHandler.printResults()
+
+    skyHandler.initialise()
 
     setupSideInfo()
 

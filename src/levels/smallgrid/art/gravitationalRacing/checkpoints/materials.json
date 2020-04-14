@@ -1,0 +1,19 @@
+{
+  "glass_red": {
+    "name": "glass_red",
+    "mapTo": "glass_red",
+    "class": "material",
+    "persistentId": "6ce9bf54-2ad1-44c6-8b55-8f89fb44ccf7",
+    "Stages": [
+      {
+        "colorMap": "textures/gravitationalRacing/checkpoints/glass_red.jpg",
+        "emissive": true,
+        "glow": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "materialTag0": "gravitationalRacing"
+  }
+}

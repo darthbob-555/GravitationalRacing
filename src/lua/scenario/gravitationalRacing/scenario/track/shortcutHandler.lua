@@ -153,7 +153,7 @@ local function createAllItems(scName)
       if type == "key" then
         items[type][i] = ClassKey.new(i, data.controlledBarriers, data.position, data.useOnNextLap)
       elseif type == "collectable" then
-        local visible = nil
+        local visible
         if foundCollectables then
           visible = not foundCollectables[1]
         end

@@ -18,14 +18,12 @@
 
     "levelObjects": {
       "sunsky": {
-        "colorize": "0 0 0 1",
-        "fogScale": "0 0 0 1",
-        "sunScale": "0 0 0 1",
-        "sunSize": "0",
-        "ambientScale": "1 1 1 1"
+        "sunSize": 0,
+        "skyBrightness": 3
       },
-      "theLevelInfo": {
-        "visibleDistance": "45000"
+      "thelevelInfo": {
+        "fogDensity": 0,
+        "visibleDistance": 1000000
       }
     },
 
@@ -102,5 +100,5 @@
     "lapConfig": ["WayPoint1"],
     "prefabs": ["solarsystem", "waypoint"],
     "radiusMultiplierAI": 2
-  },
+  }
 ]

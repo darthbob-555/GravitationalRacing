@@ -17,18 +17,15 @@
     "whiteListActions": ["default_whitelist_scenario" ],
     "blackListActions": ["default_blacklist_scenario" ],
 
-    "levelObjects": {
-      "sunsky": {
-        "colorize": "0 0 0 1",
-        "fogScale": "0 0 0 1",
-        "sunScale": "0 0 0 1",
-        "sunSize": "0",
-        "ambientScale": "1 1 1 1"
-      },
-      "theLevelInfo": {
-        "fogDensity": "0"
-      }
-    },
+    "levelObjects": {,
+"sunsky": {
+"sunSize": 0,
+"skyBrightness": 3
+},
+"thelevelInfo": {
+"fogDensity": 0
+}
+},
 
     "introType": "portrait",
     "portraitImg": {
