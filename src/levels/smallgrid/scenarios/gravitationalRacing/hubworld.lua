@@ -9,6 +9,8 @@ local ClassVehicle           = require("scenario/gravitationalRacing/classes/cla
 local ClassVector            = require("scenario/gravitationalRacing/classes/classVector")
 local errorHandler           = require("scenario/gravitationalRacing/utils/errorHandler")
 
+----------------------------------------------------------------------------------------------------
+
 local saveFileData
 local triggersGroup
 
@@ -18,6 +20,17 @@ local loadingScenario = false
 local sourceFiles = {}
 local vehicles = {player = nil}
 local display = {displaying = false, scenario = ""}
+local teleportData = {
+  destination = "",
+  championship = "",
+  angle = 0,
+  starting = false,
+  time = 3,
+  rgba = {r = 0, g = 0, b = 0, a = 0},
+  pos = vec3()
+}
+
+----------------------------------------------------------------------------------------------------
 
 local function highlightScenario(show, triggerName, pos, colour)
   --[[
@@ -319,8 +332,6 @@ end
 --Teleport Functions------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-local teleportData = {destination = "", championship = "", angle = 0, starting = false, time = 3, rgba = {r = 0, g = 0, b = 0, a = 0}}
-
 local function teleportToScenario(scenario, championship)
   --[[
   Loads the specified scenario
@@ -351,10 +362,13 @@ local function beginTeleport(dt)
   ]]--
   errorHandler.assertNil(dt)
 
+  local pos = teleportData.pos
+
   local rgba = teleportData.rgba
   rgba.a = 1 - teleportData.time/3
 
   for i = 1, 3 do
+    TorqueScript.eval('teleport'..i..'.position = "'..pos.x..' '..pos.y..' '..pos.z..'";')
     TorqueScript.eval('teleport'..i..'.instanceColor = "'..rgba.r..' '..rgba.g..' '..rgba.b..' '..rgba.a..'";')
   end
 
@@ -547,10 +561,7 @@ local function onBeamNGTrigger(data)
       teleportData.rgba = {r = rgba[1], g = rgba[2], b = rgba[3], a = 0}
 
       --Place markers
-      local pos = scenetree.findObject(data.triggerName):getPosition()
-      for i = 1, 3 do
-        TorqueScript.eval('teleport'..i..'.position = "'..pos.x..' '..pos.y..' '..pos.z..'";')
-      end
+      teleportData.pos = scenetree.findObject(data.triggerName):getPosition()
     end
   else
     ui_message("Teleporting cancelled", 3, "A")
@@ -560,71 +571,76 @@ local function onBeamNGTrigger(data)
 end
 
 local function onScenarioChange(sc)
-  if sc and sc.state == "pre-running" then
-    --Hide track info
-    guihooks.trigger("hideTrackInfo")
+  if sc then
+    if sc.state == "pre-running" then
+      --Hide track info
+      guihooks.trigger("hideTrackInfo")
 
-    for i = 1, 3 do
-      TorqueScript.eval('teleport'..i..'.position = "10000 0 0";')
-    end
-
-    if setup then
-      return
-    end
-
-    celestialsHandler.createCelestials(scenarioController.getSourceFile() ~= sc.sourceFile, nil, true)
-
-    --This prevents an issue where returning from a level to the hub-world and going back
-    --would overwrite celestials in the scenario with hub-world celestials
-    scenarioController.setSourceFile(sc.sourceFile)
-
-    if not vehicles.scenario_player0 then
-      vehicles.scenario_player0 = ClassVehicle.new("scenario_player0", scenetree.findObject("scenario_player0"):getPosition())
-    end
-
-    fileHandler.checkForUpdate()
-
-    saveFileData = fileHandler.readWholeFile()
-
-    --Compatibility since this feature was added in an update so some savefiles do not have this
-    --Also, new savefiles do not have this as there is no player scenario yet
-    if saveFileData.lastScenario then
-      local lastScenario = saveFileData.lastScenario.scenario
-      local potentialNames = {scenarioNameToTrigger(lastScenario), championshipNameToTrigger(lastScenario)}
-      local trigger = scenetree.findObject(potentialNames[1]) or scenetree.findObject(potentialNames[2])
-
-      if trigger then
-        --Place player next to trigger
-        local tPos = trigger:getPosition()
-        local position = ClassVector.new(tPos.x, tPos.y-13, tPos.z)
-
-        vehicles.scenario_player0:placeVehicle(position)
+      for i = 1, 3 do
+        TorqueScript.eval('teleport'..i..'.position = "10000 0 0";')
       end
+
+      if setup then
+        return
+      end
+
+      celestialsHandler.createCelestials(scenarioController.getSourceFile() ~= sc.sourceFile, nil, true)
+
+      --This prevents an issue where returning from a level to the hub-world and going back
+      --would overwrite celestials in the scenario with hub-world celestials
+      scenarioController.setSourceFile(sc.sourceFile)
+
+      if not vehicles.scenario_player0 then
+        vehicles.scenario_player0 = ClassVehicle.new("scenario_player0", scenetree.findObject("scenario_player0"):getPosition())
+      end
+
+      fileHandler.checkForUpdate()
+
+      saveFileData = fileHandler.readWholeFile()
+
+      --Compatibility since this feature was added in an update so some savefiles do not have this
+      --Also, new savefiles do not have this as there is no player scenario yet
+      if saveFileData.lastScenario then
+        local lastScenario = saveFileData.lastScenario.scenario
+        local potentialNames = {scenarioNameToTrigger(lastScenario), championshipNameToTrigger(lastScenario)}
+        local trigger = scenetree.findObject(potentialNames[1]) or scenetree.findObject(potentialNames[2])
+
+        if trigger then
+          --Place player next to trigger
+          local tPos = trigger:getPosition()
+          local position = ClassVector.new(tPos.x, tPos.y-13, tPos.z)
+
+          vehicles.scenario_player0:placeVehicle(position)
+        end
+      end
+
+      triggersGroup = scenetree.findClassObjects('BeamNGTrigger')
+
+      setupSourceFiles()
+
+      setupScenarios()
+      setupScenery()
+      be:reloadStaticCollision()
+
+      --Happens after setupScenery to save creating and deleting trails or non-shown celestials (which is expensive to do so)
+      celestialsHandler.initCelestials()
+      celestialsHandler.printResults()
+
+      skyHandler.initialise()
+
+      setupSideInfo()
+
+      --Hide the floor
+      local ground = scenetree.findClassObjects("Groundplane")
+      for _, name in ipairs(ground) do
+        scenetree.findObject(name).hidden = true
+      end
+
+      setup = true
+    elseif sc.state == "running" then
+      -- Skip countdown
+      sc.countDownTime = 0
     end
-
-    triggersGroup = scenetree.findClassObjects('BeamNGTrigger')
-
-    setupSourceFiles()
-
-    setupScenarios()
-    setupScenery()
-    be:reloadStaticCollision()
-
-    --Happens after setupScenery to save creating and deleting trails or non-shown celestials (which is expensive to do so)
-    celestialsHandler.initCelestials()
-    celestialsHandler.printResults()
-
-    skyHandler.initialise()
-
-    setupSideInfo()
-
-    --Hide the floor
-    local ground = scenetree.findClassObjects("Groundplane")
-    for _, name in ipairs(ground) do
-      scenetree.findObject(name).hidden = true
-    end
-
-    setup = true
   end
 end
 
