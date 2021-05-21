@@ -8,6 +8,8 @@ local function generateSkybox(type)
     Parameters:
         type - the type of skybox (HubWorld, Green, Yellow, Red, Blue)
     ]]--
+    print(true)
+
     errorHandler.assertNil(type)
     errorHandler.assertValidElement(type, {"Green", "Yellow", "Red", "Blue", "Default"}, (type or "nil").." is not valid!")
 
@@ -17,9 +19,10 @@ local function generateSkybox(type)
 
     TorqueScript.eval([[
         new SkyBox(scSkybox) {
-            material = "SpaceSky]]..type..[[";
+            material = "gr_SpaceSky]]..type..[[";
         };
     ]])
+
 end
 
 local function scDifToSkyboxColour(scenarioDifficulty)

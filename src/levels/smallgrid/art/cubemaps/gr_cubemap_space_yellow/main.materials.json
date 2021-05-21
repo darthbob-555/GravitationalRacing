@@ -1,0 +1,14 @@
+{
+  "gr_cubemap_space_yellow" : {
+    "name" : "gr_cubemap_space_yellow",
+    "class" : "CubemapData",
+    "cubeFace" : [
+      "/levels/smallgrid/art/cubemaps/gr_cubemap_space_yellow/cubemap/right",
+      "/levels/smallgrid/art/cubemaps/gr_cubemap_space_yellow/cubemap/left",
+      "/levels/smallgrid/art/cubemaps/gr_cubemap_space_yellow/cubemap/top",
+      "/levels/smallgrid/art/cubemaps/gr_cubemap_space_yellow/cubemap/bottom",
+      "/levels/smallgrid/art/cubemaps/gr_cubemap_space_yellow/cubemap/front",
+      "/levels/smallgrid/art/cubemaps/gr_cubemap_space_yellow/cubemap/back"
+    ]
+  }
+}
