@@ -293,11 +293,15 @@ $ThisPrefab = new SimGroup() {
          direction = "W";
    };
    new BeamNGVehicle(scenario_player0) {
-      JBeam = "super";
-      color = "0.00337837846 0.996621609 0.202794015 2";
-      colorPalette0 = "0.0847097039 0.0579999983 1 1.35000002";
-      colorPalette1 = "1 1 1 1.35000002";
-      partConfig = "vehicles/super/group4.pc";
+      JBeam = "bolide";
+	  color = "0.899999976 0 0 1.20000005";
+      colorPalette0 = "9.99999997e-07 9.99989993e-07 9.99989993e-07 1.20000005";
+      colorPalette1 = "0 0 0 1.29999995";
+      metallicPaintData[0] = "0.400000006 0.600000024 1 0.0299999993";
+      metallicPaintData[1] = "0 1 1 0.0700000003";
+      metallicPaintData[2] = "0.699999988 0.519999981 1 0.349999994";
+      metallicPaintData[3] = "0.200000003 0.5 0.800000012 0";
+      partConfig = "vehicles/bolide/rally_asphalt.pc";
       renderDistance = "500";
       renderFade = "0.100000001";
       datablock = "default_vehicle";

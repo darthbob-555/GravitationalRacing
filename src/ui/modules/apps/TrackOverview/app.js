@@ -1,7 +1,7 @@
 angular.module('beamng.apps')
-.directive('trackOverview', ['bngApi', function (bngApi, gamepadNav) {
+.directive('trackOverview', [function () {
   return {
-    templateUrl: 'modules/apps/trackOverview/templateBMNG.html',
+    templateUrl: '../../modules/apps/trackOverview/templateBMNG.html',
     replace: true,
     link: function (scope, element, attrs) {
       'use strict';
@@ -26,7 +26,7 @@ angular.module('beamng.apps')
         scName.innerHTML = scenarioName + " <span style='color:" + difColour + "'>(" + difficulty + ")</span>";
         scName.style.border = "2px solid " + difColour;
 
-        if (difficulty == "TUTORIAL" || difficulty == "SIMULATION") {
+        if (difficulty === "TUTORIAL" || difficulty === "SIMULATION") {
           // Hide display except scenario name as the rest is irrelevant
           document.getElementById("info").style.display = "none";
           document.getElementById("unlockReq").style.display = "none";
@@ -49,7 +49,7 @@ angular.module('beamng.apps')
           var collectable = data.collectable;
 
           var c = document.getElementById("collectable")
-          c.src = "modules/apps/TrackOverview/collectables/" + difficulty.toLowerCase() + ".png";
+          c.src = "../../modules/apps/TrackOverview/collectables/" + difficulty.toLowerCase() + ".png";
 
           if (collectable != undefined){
             if (collectable) {

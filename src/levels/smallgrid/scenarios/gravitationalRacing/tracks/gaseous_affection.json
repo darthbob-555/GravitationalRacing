@@ -18,10 +18,6 @@
     "blackListActions": ["default_blacklist_scenario" ],
 
     "levelObjects": {
-"sunsky": {
-"sunSize": 0,
-"skyBrightness": 3
-},
 "thelevelInfo": {
 "fogDensity": 0
 }
@@ -33,103 +29,7 @@
     },
     "portraitText": "There are plenty more gaseous planets and stars in this one, and each one will be more than happy to collect your car. The lack of acceleration will not be able to bail you out in dangerous situations so plan where you're going before you get there. <br><br><span style='color:red;'>A note about keys: you have to collect the key AND get to the next checkpoint to keep it, otherwise it is reset</span>",
 
-    "uilayout": [
-      {
-        "css":{ "right":"0px", "left":"0px", "top":"220px", "width":"690px", "height":"160px", "margin":"auto" },
-        "noCockpit":false,
-        "directive":"raceCountdown",
-        "jsSource":"../../ui/modules/apps/RaceCountdown/app.js",
-        "name":"RaceCountdown",
-        "domElement":"<race-countdown></race-countdown>"
-      },
-      {
-        "name" : "Tacho2",
-        "domElement": "<tacho2></tacho2>",
-        "css": {"width": "300px", "height": "300px", "bottom": "20px", "right": "20px"},
-        "noCockpit":true,
-        "directive": "tacho2",
-        "jsSource": "../../ui/modules/apps/Tacho2/app.js"
-      },
-      {
-        "css":{"position": "absolute", "width":"80%", "height":"80%", "left":"10%", "right":"10%", "bottom":"10%", "top":"10%", "margin":"auto"},
-        "noCockpit":false,
-        "directive":"scenarioEndScreen",
-        "jsSource":"../../ui/modules/apps/ScenarioEndScreen/app.js",
-        "name":"Scenario End Screen",
-        "domElement":"<scenario-end-screen></scenario-end-screen>"
-      },
-      {
-        "domElement":"<forced-induction></forced-induction>",
-        "noCockpit":true,
-        "css":{
-          "right":"20px",
-          "width":"150px",
-          "height":"150px",
-          "bottom":"320px"
-        },
-        "jsSource":"../../ui/modules/apps/Forcedinduction/app.js",
-        "name":"ForcedInduction",
-        "directive":"forcedInduction"
-      },
-      {
-        "directive":"simplePowertrainControl",
-        "css":{
-          "right":"260px",
-          "width":"230px",
-          "position":"absolute",
-          "top":"",
-          "left":"",
-          "height":"170px",
-          "bottom":"0px"
-        },
-        "noCockpit":true,
-        "preserveAspectRatio":true,
-        "jsSource":"../../ui/modules/apps/SimplePowertrainControl/app.js",
-        "name":"Simple Powertrain Control",
-        "domElement":"<simple-powertrain-control></simple-powertrain-control>"
-      },
-      {
-        "directive":"raceTime",
-        "noCockpit":false,
-        "css":{
-          "right":"0px",
-          "width":"150px",
-          "height":"80px",
-          "top":"0px"
-        },
-        "jsSource":"../../ui/modules/apps/RaceTime/app.js",
-        "name":"Race Time",
-        "domElement":"<race-time></race-time>"
-      },
-      {
-        "directive":"raceCheckpoints",
-        "noCockpit":false,
-        "css":{
-          "right":"0px",
-          "left":"0px",
-          "top":"0px",
-          "width":"300px",
-          "height":"40px",
-          "margin":"auto"
-        },
-        "jsSource":"../../ui/modules/apps/RaceCheckPoints/app.js",
-        "name":"Race Check Points",
-        "domElement":"<race-checkpoints></race-checkpoints>"
-      },
-      {
-        "directive":"messages",
-        "noCockpit":false,
-        "css":{
-          "left":"0px",
-          "width":"500px",
-          "height":"400px",
-          "top":"90px"
-        },
-        "jsSource":"../../ui/modules/apps/Messages/app.js",
-        "name":"Messages",
-        "domElement":"<messages></messages>"
-      }
-    ],
+    "uilayout": "GRrace",
 
     "extensions": ["gravitationalRacing"],
 

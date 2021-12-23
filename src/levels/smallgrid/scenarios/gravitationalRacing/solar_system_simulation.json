@@ -17,10 +17,6 @@
     "blackListActions": ["default_blacklist_scenario" ],
 
     "levelObjects": {
-      "sunsky": {
-        "sunSize": 0,
-        "skyBrightness": 3
-      },
       "thelevelInfo": {
         "fogDensity": 0,
         "visibleDistance": 1000000

@@ -1,7 +1,7 @@
 angular.module('beamng.apps')
-.directive('statistics', ['bngApi', function (bngApi, gamepadNav) {
+.directive('statistics', [function () {
   return {
-    templateUrl: 'modules/apps/Statistics/templateBMNG.html',
+    templateUrl: '../../modules/apps/Statistics/templateBMNG.html',
     replace: true,
     link: function (scope, element, attrs) {
       'use strict';
@@ -46,9 +46,9 @@ angular.module('beamng.apps')
             let cell4 = row.insertCell(3);
 
             cell1.innerHTML = "<span style='color:" + scData.scenarioColour + "'><b>" + scData.scenarioName + "</b></span>";
-            cell2.innerHTML = "<img class='img' id='resetsMedal' src='modules/apps/resets.png'                                               style='opacity:" + (scData.medals.resets ? 1 : 0.125) + ";' alt=''>";
-            cell3.innerHTML = "<img class='img' id='collectable' src='modules/apps/TrackOverview/collectables/" + scData.difficulty + ".png' style='opacity:" + (scData.collectable   ? 1 : 0.125) + ";' alt=''>";
-            cell4.innerHTML = "<img class='img' id='timeMedal'   src='modules/apps/time.png'                                                 style='opacity:" + (scData.medals.time   ? 1 : 0.125) + ";' alt=''>";
+            cell2.innerHTML = "<img class='img' id='resetsMedal' src='../../modules/apps/resets.png'                                               style='opacity:" + (scData.medals.resets ? 1 : 0.125) + ";' alt=''>";
+            cell3.innerHTML = "<img class='img' id='collectable' src='../../modules/apps/TrackOverview/collectables/" + scData.difficulty + ".png' style='opacity:" + (scData.collectable   ? 1 : 0.125) + ";' alt=''>";
+            cell4.innerHTML = "<img class='img' id='timeMedal'   src='../../modules/apps/time.png'                                                 style='opacity:" + (scData.medals.time   ? 1 : 0.125) + ";' alt=''>";
           }
         }
 

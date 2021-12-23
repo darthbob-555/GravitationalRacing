@@ -1,7 +1,7 @@
 angular.module('beamng.apps')
-.directive('scenarioEndScreen', ['bngApi', 'gamepadNav', function (bngApi, gamepadNav) {
+.directive('scenarioEndScreen', [function () {
   return {
-    templateUrl: 'modules/apps/ScenarioEndScreen/templateBMNG.html',
+    templateUrl: '../../modules/apps/ScenarioEndScreen/templateBMNG.html',
     replace: true,
     link: function (scope, element, attrs) {
       'use strict';

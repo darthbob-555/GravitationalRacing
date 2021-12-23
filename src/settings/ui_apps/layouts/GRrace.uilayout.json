@@ -1,0 +1,90 @@
+{
+	"version": 1.0,
+	"apps": [
+		{
+			"appName": "tacho2",
+			"placement": {
+				"width":"300px",
+				"right":"20px",
+				"bottom":"20px",
+				"height":"300px"
+			},
+			"settings":{
+				"noCockpit":true
+			}
+		}, {
+		    "appName": "forcedInduction",
+		    "placement": {
+                "width":"150px",
+                "right":"20px",
+                "bottom":"320px",
+                "height":"150px"
+		    },
+		    "settings":{
+				"noCockpit":true
+			}
+		}, {
+		    "appName": "simplePowertrainControl",
+		    "placement": {
+                "height":"170px",
+                "top":"",
+                "bottom":"0px",
+                "width":"230px",
+                "right":"260px",
+                "left":"",
+                "position":"absolute"
+		    }
+		}, {
+		    "appName": "raceTime",
+		    "placement": {
+                "width":"150px",
+                "right":"0px",
+                "top":"0px",
+                "height":"80px"
+		    }
+		}, {
+		    "appName": "raceCheckpoints",
+		    "placement": {
+                "height":"40px",
+                "top":"0px",
+                "left":"0px",
+                "right":"0px",
+                "margin":"auto",
+                "width":"300px"
+		    }
+		}, {
+		    "appName": "messages",
+		    "placement": {
+                "width":"500px",
+                "top":"90px",
+                "height":"400px",
+                "left":"0px"
+		    }
+		},{
+		    "appName": "raceCountdown",
+		    "placement": { 
+				"right":"0px", 
+				"left":"0px", 
+				"top":"220px", 
+				"width":"690px", 
+				"height":"160px", 
+				"margin":"auto" 
+			}
+		},
+		{
+			"appName": "scenarioEndScreen",
+			"placement": {
+				"position": "absolute", 
+				"width":"80%", 
+				"height":"80%", 
+				"left":"10%", 
+				"right":"10%", 
+				"bottom":"10%", 
+				"top":"10%", 
+				"margin":"auto"
+			}
+		}
+	],
+	"title": "GRrace",
+	"type": "GRrace"
+}
